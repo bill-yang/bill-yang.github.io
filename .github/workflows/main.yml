@@ -1,0 +1,38 @@
+name: HashiCorp Packer
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest    
+    name: Packer Build new AMI
+    steps:
+    - uses: actions/checkout@master
+    - uses: ./action-a
+      env:
+        MY_NAME: "Bill Yang"
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to test target group
+    needs: [build]
+    steps:
+    - uses: ./action-b
+      env:
+        MY_NAME: "Bill Yang"
+  promote:
+    runs-on: ubuntu-latest
+    name: Promote test target group to live
+    needs: [build,deploy]
+  scale-down:
+    runs-on: ubuntu-latest
+    name: Scale down test target group
+    needs: [build,deploy,promote]
+    steps:
+      - name: Scale down
+        env:
+          MY_VAR: Hi there, now scale down the test target group
+        run: | 
+          echo $MY_VAR
