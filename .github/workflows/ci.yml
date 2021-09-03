@@ -17,8 +17,5 @@ jobs:
     - name: Deploy
       run: |
         echo deploy...
-      with:
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        BRANCH: gh-pages
-        FOLDER: build
+
     
