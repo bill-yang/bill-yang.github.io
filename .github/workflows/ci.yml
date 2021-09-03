@@ -1,4 +1,4 @@
-name: GitHub Actions Build and Deploy Demo
+name: GitHub Actions Build and Deploy Demo (ci.yml)
 on:
   push:
     branches:
@@ -15,10 +15,10 @@ jobs:
       run: |
         echo install and build ...
     - name: Deploy
+      run: |
+        echo deploy...
       with:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BRANCH: gh-pages
         FOLDER: build
-      run: |
-        echo deploy...
-      
+    

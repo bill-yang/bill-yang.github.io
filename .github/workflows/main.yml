@@ -1,4 +1,4 @@
-name: HashiCorp Packer
+name: HashiCorp Packer (main.yml)
 on: 
   push:
     branches:
