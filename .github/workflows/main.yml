@@ -26,6 +26,12 @@ jobs:
     runs-on: ubuntu-latest
     name: Promote test target group to live
     needs: [build,deploy]
+    steps:
+      - name: promote
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        run: | 
+          echo $ACCESS_TOKEN
   scale-down:
     runs-on: ubuntu-latest
     name: Scale down test target group
