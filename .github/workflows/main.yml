@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest    
     name: Packer Build new AMI
     steps:
-    - uses: actions/checkout@master
     - uses: ./action-a
       env:
         MY_NAME: "Bill Yang"
