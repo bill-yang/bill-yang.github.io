@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest    
     name: Packer Build new AMI
     steps:
+    - uses: actions/checkout@main
     - uses: ./action-a
       env:
         MY_NAME: "Bill Yang"
@@ -18,6 +19,7 @@ jobs:
     name: Deploy to test target group
     needs: [build]
     steps:
+    - uses: actions/checkout@main
     - uses: ./action-b
       env:
         MY_NAME: "Bill Yang"
