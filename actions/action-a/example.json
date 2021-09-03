@@ -1,14 +1,14 @@
 {
   "variables": {
-    "aws_access_key": "",
-    "aws_secret_key": ""
+    "aws_access_key": "{{env `MY_AWS_ACCESS`}}",
+    "aws_secret_key": "{{env `MY_AWS_SECRET`}}"
   },
   "builders": [
     {
       "type": "amazon-ebs",
       "access_key": "{{user `aws_access_key`}}",
       "secret_key": "{{user `aws_secret_key`}}",
-      "region": "us-west-2s",
+      "region": "us-west-2",
       "source_ami_filter": {
         "filters": {
           "virtualization-type": "hvm",

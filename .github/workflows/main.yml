@@ -10,9 +10,11 @@ jobs:
     name: Packer Build new AMI
     steps:
     - uses: actions/checkout@main
-    - uses: ./action-a
+    - uses: ./actions/action-a
       env:
         MY_NAME: "Bill Yang"
+        MY_AWS_ACCESS: ${{ secrets.MY_AWS_ACCESS }}
+        MY_AWS_SECRET: ${{ secrets.MY_AWS_SECRET }}
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
   deploy:
     runs-on: ubuntu-latest
@@ -20,7 +22,7 @@ jobs:
     needs: [build]
     steps:
     - uses: actions/checkout@main
-    - uses: ./action-b
+    - uses: ./actions/action-b
       env:
         MY_NAME: "Bill Yang"
   promote:
@@ -32,7 +34,7 @@ jobs:
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: | 
-          echo $ACCESS_TOKEN
+          echo "token is $ACCESS_TOKEN ..."
   scale-down:
     runs-on: ubuntu-latest
     name: Scale down test target group
@@ -42,4 +44,4 @@ jobs:
         env:
           MY_VAR: Hi there, now scale down the test target group
         run: | 
-          echo $MY_VAR
+          echo "$MY_VAR"
