@@ -2,7 +2,9 @@
 
 name: Transfer Bitbucket Pipeline to Github Actions (bitbucket-to-github.yml)
 on: 
-  workflow_dispatch
+  workflow_dispatch:
+    branches:
+      - develop
 
 jobs:
   check-target:
