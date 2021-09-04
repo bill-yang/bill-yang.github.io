@@ -90,3 +90,42 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN}} # GitHub 读写仓库的权限token，自动生成无需关心
         publish_branch: master
 ```
+
+# run a script
+
+To be more explicit, you can write ./.github/script.sh.
+
+If you want to know the full path where the working copy resides in the runner, then you can do run: pwd which will print the working directory.
+
+The absolute path should be /home/runner/work/{repo-name}/{repo-name}/.github/script.sh, so this should also work:
+
+- run: |
+    # make file runnable, might not be necessary
+    chmod +x "${GITHUB_WORKSPACE}/.github/script.sh"
+
+    # run script
+    "${GITHUB_WORKSPACE}/.github/script.sh"
+    # or
+    "${{ format('{0}/.github/script.sh', github.workspace) }}"
+
+
+# File systems
+https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners
+
+GitHub executes actions and shell commands in specific directories on the virtual machine. The file paths on virtual machines are not static. Use the environment variables GitHub provides to construct file paths for the home, workspace, and workflow directories.
+Directory	Environment variable	Description
+home	HOME	Contains user-related data. For example, this directory could contain credentials from a login attempt.
+workspace	GITHUB_WORKSPACE	Actions and shell commands execute in this directory. An action can modify the contents of this directory, which subsequent actions can access.
+workflow/event.json	GITHUB_EVENT_PATH	The POST payload of the webhook event that triggered the workflow. GitHub rewrites this each time an action executes to isolate file content between actions.
+
+For a list of the environment variables GitHub creates for each workflow, see "Using environment variables."
+Docker container filesystem
+
+Actions that run in Docker containers have static directories under the /github path. However, we strongly recommend using the default environment variables to construct file paths in Docker containers.
+
+GitHub reserves the /github path prefix and creates three directories for actions.
+
+    /github/home
+    /github/workspace - Note: GitHub Actions must be run by the default Docker user (root). Ensure your Dockerfile does not set the USER instruction, otherwise you will not be able to access GITHUB_WORKSPACE.
+    /github/workflow
+
