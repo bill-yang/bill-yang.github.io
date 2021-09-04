@@ -43,3 +43,15 @@ jobs:
         echo "Live target: ${{needs.check-target.outputs.live_target_group}}"
         echo "Current path: $(pwd)"
         ls -la
+
+  build-with-docker:
+    runs-on: ubuntu-latest    
+    name: Packer Build new AMI with Docker
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./actions/ap-build
+      with:
+        MY_NAME: "Bill Yang"
+        MY_AWS_ACCESS: ${{ secrets.MY_AWS_ACCESS }}
+        MY_AWS_SECRET: ${{ secrets.MY_AWS_SECRET }}
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
