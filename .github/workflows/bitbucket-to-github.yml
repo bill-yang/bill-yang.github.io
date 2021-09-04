@@ -3,8 +3,6 @@
 name: Transfer Bitbucket Pipeline to Github Actions (bitbucket-to-github.yml)
 on: 
   workflow_dispatch:
-    branches:
-      - develop
 
 jobs:
   check-target:
@@ -22,15 +20,13 @@ jobs:
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_KEY }}
           export AWS_DEFAULT_REGION=us-west-2
           echo "Check Target/Live AMI status"
+          echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+          echo "Current path: $(pwd)"
           git clone https://github.com/bill-yang/bill-yang.github.io.git
-          echo "${GITHUB_WORKSPACE}/.github/script.sh"
-          chmod +x "${GITHUB_WORKSPACE}/.github/script.sh"
-          "${GITHUB_WORKSPACE}/.github/script.sh"
-          echo "pwd value in script is $pwd"
+          ls -la "${GITHUB_WORKSPACE}"
 
-          cd ${GITHUB_WORKSPACE}/bill-yang.github.io
-          terraform get --update && terraform init -backend-config=backend.conf
-          terraform state show module.production-alb.aws_alb_listener.payment_microservice_alb_listener
+          cd bill-yang.github.io
+          ls -la
           default_listener_blue_count=`terraform state show module.production-alb.aws_alb_listener.payment_microservice_alb_listener | grep -c 'prod-alb-payment-blue-tg-3000'` && echo 'OK!';
           if test $default_listener_blue_count -eq 0; then live_target='green'; else live_target='blue'; fi
           if test $live_target == 'blue'; then test_target='green'; else test_target='blue'; fi
@@ -45,7 +41,5 @@ jobs:
      - run: |
         echo "Test target: ${{needs.check-target.outputs.test_target_group}}"
         echo "Live target: ${{needs.check-target.outputs.live_target_group}}"
-        cd ${GITHUB_WORKSPACE}/bill-yang.github.io
-        terraform get --update && terraform init -backend-config=backend-$(echo $test_target | tr -d '\r').conf
-        terraform apply -auto-approve -var 'autoscaling_group_min_size=0' -var 'autoscaling_group_desire_size=0' -var 'autoscaling_group_max_size=0' -var "blue_green=$(echo $test_target | tr -d '\r')"
-        terraform apply -auto-approve -var "launch_configuration_instance_type=$INSTANCE_TYPE" -var 'autoscaling_group_min_size=2' -var 'autoscaling_group_desire_size=2' -var 'autoscaling_group_max_size=8' -var "blue_green=$(echo $test_target | tr -d '\r')"
+        echo "Current path: $(pwd)"
+        ls -la
