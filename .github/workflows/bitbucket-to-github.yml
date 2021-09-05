@@ -10,7 +10,8 @@ jobs:
       test_target_group: ${{ steps.step1.outputs.test_target_group }}
       live_target_group: ${{ steps.step1.outputs.live_target_group }}
     steps:
-      - id: step1
+      - name: git clone github repository
+        id: step1
         run: |
           export AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
           export AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}
@@ -39,14 +40,23 @@ jobs:
         echo "Live target: ${{needs.check-target.outputs.live_target_group}}"
         echo "Current path: $(pwd)"
         ls -la
+
   build-with-docker:
     runs-on: ubuntu-latest    
     name: Packer Build new AMI with Docker
+    outputs:
+      runtime: ${{ steps.step1.outputs.time }}
     steps:
-    - uses: actions/checkout@v2
-    - uses: ./actions/ap-build
+    - name: check out
+      uses: actions/checkout@v2
+    - name: build with docker file
+      id: step1
+      uses: ./actions/ap-build
       env:
         MY_NAME: "Bill Yang"
         MY_AWS_ACCESS: ${{ secrets.MY_AWS_ACCESS }}
         MY_AWS_SECRET: ${{ secrets.MY_AWS_SECRET }}
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+    - name: show result
+      run: |
+        echo "Run time: ${{ steps.step1.outputs.time }}"
