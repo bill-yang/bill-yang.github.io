@@ -9,11 +9,13 @@ ADD example.json /example.json
 RUN packer validate /example.json
 
 # pass argument
-ARG ACCESS_TOKEN
-RUN echo "access token: $ACCESS_TOKEN"
+RUN echo "access token: ${ACCESS_TOKEN}"
 
-ENV MY_NAME=$MY_NAME
-RUN echo "My Name: $MY_NAME"
+RUN echo "access token: ${ACCESS_TOKEN}"
+
+RUN echo "My Name: ${MY_NAME}"
+
+RUN echo "My Full Name: $MY_FULL_NAME"
 
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
 COPY entrypoint.sh /entrypoint.sh

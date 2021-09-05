@@ -1,5 +1,7 @@
 name: Transfer Bitbucket Pipeline to Github Actions (bitbucket-to-github.yml)
-on: 
+on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -44,11 +46,12 @@ jobs:
   build-with-docker:
     runs-on: ubuntu-latest    
     name: Packer Build new AMI with Docker
-    outputs:
-      runtime: ${{ steps.step1.outputs.time }}
     steps:
     - name: check out
       uses: actions/checkout@v2
+    - name: set env
+      run: |
+        export MY_FULL_NAME="Bill Yang" # not work
     - name: build with docker file
       id: step1
       uses: ./actions/ap-build
@@ -60,3 +63,7 @@ jobs:
     - name: show result
       run: |
         echo "Run time: ${{ steps.step1.outputs.time }}"
+        echo "live_target_group: ${{ steps.step1.outputs.live_target_group }}"
+        echo "test_var_output: ${{ steps.step1.outputs.test_var_output }}"
+        
+        echo "test_var_env: ${{ env.test_var_env }}"
