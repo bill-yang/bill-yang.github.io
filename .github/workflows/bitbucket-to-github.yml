@@ -22,7 +22,6 @@ jobs:
           echo "Current path: $(pwd)"
           git clone https://github.com/bill-yang/bill-yang.github.io.git
           ls -la "${GITHUB_WORKSPACE}"
-
           cd bill-yang.github.io
           ls -la
           default_listener_blue_count=`terraform state show module.production-alb.aws_alb_listener.payment_microservice_alb_listener | grep -c 'prod-alb-payment-blue-tg-3000'` && echo 'OK!';
@@ -30,7 +29,6 @@ jobs:
           if test $live_target == 'blue'; then test_target='green'; else test_target='blue'; fi
           echo "::set-output name=test_target_group::$test_target"
           echo "::set-output name=live_target_group::$live_target"
-
   build:
     runs-on: ubuntu-latest
     name: Packer Build new AMI
@@ -41,14 +39,10 @@ jobs:
         echo "Live target: ${{needs.check-target.outputs.live_target_group}}"
         echo "Current path: $(pwd)"
         ls -la
-
   build-with-docker:
     runs-on: ubuntu-latest    
     name: Packer Build new AMI with Docker
-    outputs:
-      time: ${{ steps.step1.outputs.time }}
     steps:
-    - id: step1
     - uses: actions/checkout@v2
     - uses: ./actions/ap-build
       env:
@@ -56,12 +50,3 @@ jobs:
         MY_AWS_ACCESS: ${{ secrets.MY_AWS_ACCESS }}
         MY_AWS_SECRET: ${{ secrets.MY_AWS_SECRET }}
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-
-  build-with-docker-step2:
-    runs-on: ubuntu-latest
-    name: build-with-docker-step2
-    needs: [build-with-docker]
-    steps:
-     - run: |
-        echo "Run time : ${{needs.build-with-docker.outputs.time}}"
-
