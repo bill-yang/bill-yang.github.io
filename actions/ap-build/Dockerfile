@@ -14,3 +14,7 @@ RUN echo "access token: $ACCESS_TOKEN"
 
 ENV MY_NAME=$MY_NAME
 RUN echo "My Name: $MY_NAME"
+
+# Code file to execute when the docker container starts up (`entrypoint.sh`)
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]

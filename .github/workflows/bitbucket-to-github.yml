@@ -1,5 +1,3 @@
-# https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions
-
 name: Transfer Bitbucket Pipeline to Github Actions (bitbucket-to-github.yml)
 on: 
   workflow_dispatch:
@@ -47,11 +45,23 @@ jobs:
   build-with-docker:
     runs-on: ubuntu-latest    
     name: Packer Build new AMI with Docker
+    outputs:
+      time: ${{ steps.step1.outputs.time }}
     steps:
+    - id: step1
     - uses: actions/checkout@v2
     - uses: ./actions/ap-build
-      with:
+      env:
         MY_NAME: "Bill Yang"
         MY_AWS_ACCESS: ${{ secrets.MY_AWS_ACCESS }}
         MY_AWS_SECRET: ${{ secrets.MY_AWS_SECRET }}
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
+  build-with-docker-step2:
+    runs-on: ubuntu-latest
+    name: build-with-docker-step2
+    needs: [build-with-docker]
+    steps:
+     - run: |
+        echo "Run time : ${{needs.build-with-docker.outputs.time}}"
+
