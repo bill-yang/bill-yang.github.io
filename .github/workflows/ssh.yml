@@ -1,0 +1,27 @@
+name: remote ssh command
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          command_timeout: 5m
+          script: |
+            cd ~/test
+            git pull origin master
+            yarn
+            yarn build
+
+# 比如 ssh root@10.20.0.1
+# HOST = 10.20.0.1
+# USERNAME = root
+# PASSWORD = ******（服务器登录密码）
