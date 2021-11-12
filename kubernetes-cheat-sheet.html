@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>Kubernetes Cheat Sheet - My Website</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="/kubernetes-cheat-sheet.html">
+
+        <meta name="author" content="Bill Yang" />
+        <meta name="keywords" content="kubernetes,k8s" />
+        <meta name="description" content="Kubernetes Cheat Sheet" />
+
+        <meta property="og:site_name" content="My Website" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Kubernetes Cheat Sheet"/>
+        <meta property="og:url" content="/kubernetes-cheat-sheet.html"/>
+        <meta property="og:description" content="Kubernetes Cheat Sheet"/>
+        <meta property="article:published_time" content="2021-11-11" />
+            <meta property="article:section" content="Technology" />
+            <meta property="article:tag" content="kubernetes" />
+            <meta property="article:tag" content="k8s" />
+            <meta property="article:author" content="Bill Yang" />
+
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/theme/css/pygments/native.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+
+        <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+              title="My Website ATOM Feed"/>
+
+        <link href="/feeds/technology.atom.xml" type="application/atom+xml" rel="alternate"
+              title="My Website Technology ATOM Feed"/>
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+My Website            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                        <li >
+                            <a href="/category/cheat-sheet.html">Cheat sheet</a>
+                        </li>
+                        <li >
+                            <a href="/category/issue.html">Issue</a>
+                        </li>
+                        <li >
+                            <a href="/category/task.html">Task</a>
+                        </li>
+                        <li class="active">
+                            <a href="/category/technology.html">Technology</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<!-- Banner -->
+<!-- End Banner -->
+
+<!-- Content Container -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="/kubernetes-cheat-sheet.html"
+                       rel="bookmark"
+                       title="Permalink to Kubernetes Cheat Sheet">
+                        Kubernetes Cheat Sheet
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2021-11-11T00:00:00-08:00"> Thu 11 November 2021</time>
+    </span>
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="/tag/kubernetes.html">kubernetes</a>
+        /
+	<a href="/tag/k8s.html">k8s</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <h1>kubectl Cheat Sheet</h1>
+<h2><a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/">Original link</a></h2>
+<!-- overview -->
+
+<p>This page contains a list of commonly used <code>kubectl</code> commands and flags.</p>
+<!-- body -->
+
+<h2>Kubectl autocomplete</h2>
+<h3>BASH</h3>
+<div class="highlight"><pre><span></span><code><span class="nb">source</span> &lt;<span class="o">(</span>kubectl completion bash<span class="o">)</span> <span class="c1"># setup autocomplete in bash into the current shell, bash-completion package should be installed first.</span>
+<span class="nb">echo</span> <span class="s2">&quot;source &lt;(kubectl completion bash)&quot;</span> &gt;&gt; ~/.bashrc <span class="c1"># add autocomplete permanently to your bash shell.</span>
+</code></pre></div>
+
+<p>You can also use a shorthand alias for <code>kubectl</code> that also works with completion:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">alias</span> <span class="nv">k</span><span class="o">=</span>kubectl
+<span class="nb">complete</span> -F __start_kubectl k
+</code></pre></div>
+
+<h3>ZSH</h3>
+<div class="highlight"><pre><span></span><code><span class="nb">source</span> &lt;<span class="o">(</span>kubectl completion zsh<span class="o">)</span>  <span class="c1"># setup autocomplete in zsh into the current shell</span>
+<span class="nb">echo</span> <span class="s2">&quot;[[ </span><span class="nv">$commands</span><span class="s2">[kubectl] ]] &amp;&amp; source &lt;(kubectl completion zsh)&quot;</span> &gt;&gt; ~/.zshrc <span class="c1"># add autocomplete permanently to your zsh shell</span>
+</code></pre></div>
+
+<h2>Kubectl context and configuration</h2>
+<p>Set which Kubernetes cluster <code>kubectl</code> communicates with and modifies configuration
+information. See <a href="/docs/tasks/access-application-cluster/configure-access-multiple-clusters/">Authenticating Across Clusters with kubeconfig</a> documentation for
+detailed config file information.</p>
+<div class="highlight"><pre><span></span><code>kubectl config view <span class="c1"># Show Merged kubeconfig settings.</span>
+
+<span class="c1"># use multiple kubeconfig files at the same time and view merged config</span>
+<span class="nv">KUBECONFIG</span><span class="o">=</span>~/.kube/config:~/.kube/kubconfig2 
+
+kubectl config view
+
+<span class="c1"># get the password for the e2e user</span>
+kubectl config view -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.users[?(@.name == &quot;e2e&quot;)].user.password}&#39;</span>
+
+kubectl config view -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.users[].name}&#39;</span>    <span class="c1"># display the first user</span>
+kubectl config view -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.users[*].name}&#39;</span>   <span class="c1"># get a list of users</span>
+kubectl config get-contexts                          <span class="c1"># display list of contexts </span>
+kubectl config current-context                       <span class="c1"># display the current-context</span>
+kubectl config use-context my-cluster-name           <span class="c1"># set the default context to my-cluster-name</span>
+
+<span class="c1"># add a new user to your kubeconf that supports basic auth</span>
+kubectl config set-credentials kubeuser/foo.kubernetes.com --username<span class="o">=</span>kubeuser --password<span class="o">=</span>kubepassword
+
+<span class="c1"># permanently save the namespace for all subsequent kubectl commands in that context.</span>
+kubectl config set-context --current --namespace<span class="o">=</span>ggckad-s2
+
+<span class="c1"># set a context utilizing a specific username and namespace.</span>
+kubectl config set-context gce --user<span class="o">=</span>cluster-admin --namespace<span class="o">=</span>foo <span class="se">\</span>
+  <span class="o">&amp;&amp;</span> kubectl config use-context gce
+
+kubectl config <span class="nb">unset</span> users.foo                       <span class="c1"># delete user foo</span>
+</code></pre></div>
+
+<h2>Kubectl apply</h2>
+<p><code>apply</code> manages applications through files defining Kubernetes resources. It creates and updates resources in a cluster through running <code>kubectl apply</code>. This is the recommended way of managing Kubernetes applications on production. See <a href="https://kubectl.docs.kubernetes.io">Kubectl Book</a>.</p>
+<h2>Creating objects</h2>
+<p>Kubernetes manifests can be defined in YAML or JSON. The file extension <code>.yaml</code>,
+<code>.yml</code>, and <code>.json</code> can be used.</p>
+<div class="highlight"><pre><span></span><code>kubectl apply -f ./my-manifest.yaml            <span class="c1"># create resource(s)</span>
+kubectl apply -f ./my1.yaml -f ./my2.yaml      <span class="c1"># create from multiple files</span>
+kubectl apply -f ./dir                         <span class="c1"># create resource(s) in all manifest files in dir</span>
+kubectl apply -f https://git.io/vPieo          <span class="c1"># create resource(s) from url</span>
+kubectl create deployment nginx --image<span class="o">=</span>nginx  <span class="c1"># start a single instance of nginx</span>
+
+<span class="c1"># create a Job which prints &quot;Hello World&quot;</span>
+kubectl create job hello --image<span class="o">=</span>busybox -- <span class="nb">echo</span> <span class="s2">&quot;Hello World&quot;</span> 
+
+<span class="c1"># create a CronJob that prints &quot;Hello World&quot; every minute</span>
+kubectl create cronjob hello --image<span class="o">=</span>busybox   --schedule<span class="o">=</span><span class="s2">&quot;*/1 * * * *&quot;</span> -- <span class="nb">echo</span> <span class="s2">&quot;Hello World&quot;</span>    
+
+kubectl explain pods                           <span class="c1"># get the documentation for pod manifests</span>
+
+<span class="c1"># Create multiple YAML objects from stdin</span>
+cat <span class="s">&lt;&lt;EOF | kubectl apply -f -</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: Pod</span>
+<span class="s">metadata:</span>
+<span class="s">  name: busybox-sleep</span>
+<span class="s">spec:</span>
+<span class="s">  containers:</span>
+<span class="s">  - name: busybox</span>
+<span class="s">    image: busybox</span>
+<span class="s">    args:</span>
+<span class="s">    - sleep</span>
+<span class="s">    - &quot;1000000&quot;</span>
+<span class="s">---</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: Pod</span>
+<span class="s">metadata:</span>
+<span class="s">  name: busybox-sleep-less</span>
+<span class="s">spec:</span>
+<span class="s">  containers:</span>
+<span class="s">  - name: busybox</span>
+<span class="s">    image: busybox</span>
+<span class="s">    args:</span>
+<span class="s">    - sleep</span>
+<span class="s">    - &quot;1000&quot;</span>
+<span class="s">EOF</span>
+
+<span class="c1"># Create a secret with several keys</span>
+cat <span class="s">&lt;&lt;EOF | kubectl apply -f -</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: Secret</span>
+<span class="s">metadata:</span>
+<span class="s">  name: mysecret</span>
+<span class="s">type: Opaque</span>
+<span class="s">data:</span>
+<span class="s">  password: $(echo -n &quot;s33msi4&quot; | base64 -w0)</span>
+<span class="s">  username: $(echo -n &quot;jane&quot; | base64 -w0)</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<h2>Viewing, finding resources</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get commands with basic output</span>
+kubectl get services                          <span class="c1"># List all services in the namespace</span>
+kubectl get pods --all-namespaces             <span class="c1"># List all pods in all namespaces</span>
+kubectl get pods -o wide                      <span class="c1"># List all pods in the current namespace, with more details</span>
+kubectl get deployment my-dep                 <span class="c1"># List a particular deployment</span>
+kubectl get pods                              <span class="c1"># List all pods in the namespace</span>
+kubectl get pod my-pod -o yaml                <span class="c1"># Get a pod&#39;s YAML</span>
+
+<span class="c1"># Describe commands with verbose output</span>
+kubectl describe nodes my-node
+kubectl describe pods my-pod
+
+<span class="c1"># List Services Sorted by Name</span>
+kubectl get services --sort-by<span class="o">=</span>.metadata.name
+
+<span class="c1"># List pods Sorted by Restart Count</span>
+kubectl get pods --sort-by<span class="o">=</span><span class="s1">&#39;.status.containerStatuses[0].restartCount&#39;</span>
+
+<span class="c1"># List PersistentVolumes sorted by capacity</span>
+kubectl get pv --sort-by<span class="o">=</span>.spec.capacity.storage
+
+<span class="c1"># Get the version label of all pods with label app=cassandra</span>
+kubectl get pods --selector<span class="o">=</span><span class="nv">app</span><span class="o">=</span>cassandra -o <span class="se">\</span>
+  <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.items[*].metadata.labels.version}&#39;</span>
+
+<span class="c1"># Retrieve the value of a key with dots, e.g. &#39;ca.crt&#39;</span>
+kubectl get configmap myconfig <span class="se">\</span>
+  -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.ca\.crt}&#39;</span>
+
+<span class="c1"># Get all worker nodes (use a selector to exclude results that have a label</span>
+<span class="c1"># named &#39;node-role.kubernetes.io/master&#39;)</span>
+kubectl get node --selector<span class="o">=</span><span class="s1">&#39;!node-role.kubernetes.io/master&#39;</span>
+
+<span class="c1"># Get all running pods in the namespace</span>
+kubectl get pods --field-selector<span class="o">=</span>status.phase<span class="o">=</span>Running
+
+<span class="c1"># Get ExternalIPs of all nodes</span>
+kubectl get nodes -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.items[*].status.addresses[?(@.type==&quot;ExternalIP&quot;)].address}&#39;</span>
+
+<span class="c1"># List Names of Pods that belong to Particular RC</span>
+<span class="c1"># &quot;jq&quot; command useful for transformations that are too complex for jsonpath, it can be found at https://stedolan.github.io/jq/</span>
+<span class="nv">sel</span><span class="o">=</span><span class="si">${</span><span class="k">$(</span>kubectl get rc my-rc --output<span class="o">=</span>json <span class="p">|</span> jq -j <span class="s1">&#39;.spec.selector | to_entries | .[] | &quot;\(.key)=\(.value),&quot;&#39;</span><span class="k">)</span><span class="p">%?</span><span class="si">}</span>
+<span class="nb">echo</span> <span class="k">$(</span>kubectl get pods --selector<span class="o">=</span><span class="nv">$sel</span> --output<span class="o">=</span><span class="nv">jsonpath</span><span class="o">={</span>.items..metadata.name<span class="o">}</span><span class="k">)</span>
+
+<span class="c1"># Show labels for all pods (or any other Kubernetes object that supports labelling)</span>
+kubectl get pods --show-labels
+
+<span class="c1"># Check which nodes are ready</span>
+<span class="nv">JSONPATH</span><span class="o">=</span><span class="s1">&#39;{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}&#39;</span> <span class="se">\</span>
+ <span class="o">&amp;&amp;</span> kubectl get nodes -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$JSONPATH</span><span class="s2">&quot;</span> <span class="p">|</span> grep <span class="s2">&quot;Ready=True&quot;</span>
+
+<span class="c1"># Output decoded secrets without external tools</span>
+kubectl get secret my-secret -o go-template<span class="o">=</span><span class="s1">&#39;{{range $k,$v := .data}}{{&quot;### &quot;}}{{$k}}{{&quot;\n&quot;}}{{$v|base64decode}}{{&quot;\n\n&quot;}}{{end}}&#39;</span>
+
+<span class="c1"># List all Secrets currently in use by a pod</span>
+kubectl get pods -o json <span class="p">|</span> jq <span class="s1">&#39;.items[].spec.containers[].env[]?.valueFrom.secretKeyRef.name&#39;</span> <span class="p">|</span> grep -v null <span class="p">|</span> sort <span class="p">|</span> uniq
+
+<span class="c1"># List all containerIDs of initContainer of all pods</span>
+<span class="c1"># Helpful when cleaning up stopped containers, while avoiding removal of initContainers.</span>
+kubectl get pods --all-namespaces -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{range .items[*].status.initContainerStatuses[*]}{.containerID}{&quot;\n&quot;}{end}&#39;</span> <span class="p">|</span> cut -d/ -f3
+
+<span class="c1"># List Events sorted by timestamp</span>
+kubectl get events --sort-by<span class="o">=</span>.metadata.creationTimestamp
+
+<span class="c1"># Compares the current state of the cluster against the state that the cluster would be in if the manifest was applied.</span>
+kubectl diff -f ./my-manifest.yaml
+
+<span class="c1"># Produce a period-delimited tree of all keys returned for nodes</span>
+<span class="c1"># Helpful when locating a key within a complex nested JSON structure</span>
+kubectl get nodes -o json <span class="p">|</span> jq -c <span class="s1">&#39;path(..)|[.[]|tostring]|join(&quot;.&quot;)&#39;</span>
+
+<span class="c1"># Produce a period-delimited tree of all keys returned for pods, etc</span>
+kubectl get pods -o json <span class="p">|</span> jq -c <span class="s1">&#39;path(..)|[.[]|tostring]|join(&quot;.&quot;)&#39;</span>
+
+<span class="c1"># Produce ENV for all pods, assuming you have a default container for the pods, default namespace and the `env` command is supported.</span>
+<span class="c1"># Helpful when running any supported command across all pods, not just `env`</span>
+<span class="k">for</span> pod <span class="k">in</span> <span class="k">$(</span>kubectl get po --output<span class="o">=</span><span class="nv">jsonpath</span><span class="o">={</span>.items..metadata.name<span class="o">}</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span> <span class="nb">echo</span> <span class="nv">$pod</span> <span class="o">&amp;&amp;</span> kubectl <span class="nb">exec</span> -it <span class="nv">$pod</span> -- env<span class="p">;</span> <span class="k">done</span>
+</code></pre></div>
+
+<h2>Updating resources</h2>
+<div class="highlight"><pre><span></span><code>kubectl <span class="nb">set</span> image deployment/frontend <span class="nv">www</span><span class="o">=</span>image:v2               <span class="c1"># Rolling update &quot;www&quot; containers of &quot;frontend&quot; deployment, updating the image</span>
+kubectl rollout <span class="nb">history</span> deployment/frontend                      <span class="c1"># Check the history of deployments including the revision </span>
+kubectl rollout undo deployment/frontend                         <span class="c1"># Rollback to the previous deployment</span>
+kubectl rollout undo deployment/frontend --to-revision<span class="o">=</span><span class="m">2</span>         <span class="c1"># Rollback to a specific revision</span>
+kubectl rollout status -w deployment/frontend                    <span class="c1"># Watch rolling update status of &quot;frontend&quot; deployment until completion</span>
+kubectl rollout restart deployment/frontend                      <span class="c1"># Rolling restart of the &quot;frontend&quot; deployment</span>
+
+
+cat pod.json <span class="p">|</span> kubectl replace -f -                              <span class="c1"># Replace a pod based on the JSON passed into std</span>
+
+<span class="c1"># Force replace, delete and then re-create the resource. Will cause a service outage.</span>
+kubectl replace --force -f ./pod.json
+
+<span class="c1"># Create a service for a replicated nginx, which serves on port 80 and connects to the containers on port 8000</span>
+kubectl expose rc nginx --port<span class="o">=</span><span class="m">80</span> --target-port<span class="o">=</span><span class="m">8000</span>
+
+<span class="c1"># Update a single-container pod&#39;s image version (tag) to v4</span>
+kubectl get pod mypod -o yaml <span class="p">|</span> sed <span class="s1">&#39;s/\(image: myimage\):.*$/\1:v4/&#39;</span> <span class="p">|</span> kubectl replace -f -
+
+kubectl label pods my-pod new-label<span class="o">=</span>awesome                      <span class="c1"># Add a Label</span>
+kubectl annotate pods my-pod icon-url<span class="o">=</span>http://goo.gl/XXBTWq       <span class="c1"># Add an annotation</span>
+kubectl autoscale deployment foo --min<span class="o">=</span><span class="m">2</span> --max<span class="o">=</span><span class="m">10</span>                <span class="c1"># Auto scale a deployment &quot;foo&quot;</span>
+</code></pre></div>
+
+<h2>Patching resources</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Partially update a node</span>
+kubectl patch node k8s-node-1 -p <span class="s1">&#39;{&quot;spec&quot;:{&quot;unschedulable&quot;:true}}&#39;</span>
+
+<span class="c1"># Update a container&#39;s image; spec.containers[*].name is required because it&#39;s a merge key</span>
+kubectl patch pod valid-pod -p <span class="s1">&#39;{&quot;spec&quot;:{&quot;containers&quot;:[{&quot;name&quot;:&quot;kubernetes-serve-hostname&quot;,&quot;image&quot;:&quot;new image&quot;}]}}&#39;</span>
+
+<span class="c1"># Update a container&#39;s image using a json patch with positional arrays</span>
+kubectl patch pod valid-pod --type<span class="o">=</span><span class="s1">&#39;json&#39;</span> -p<span class="o">=</span><span class="s1">&#39;[{&quot;op&quot;: &quot;replace&quot;, &quot;path&quot;: &quot;/spec/containers/0/image&quot;, &quot;value&quot;:&quot;new image&quot;}]&#39;</span>
+
+<span class="c1"># Disable a deployment livenessProbe using a json patch with positional arrays</span>
+kubectl patch deployment valid-deployment  --type json   -p<span class="o">=</span><span class="s1">&#39;[{&quot;op&quot;: &quot;remove&quot;, &quot;path&quot;: &quot;/spec/template/spec/containers/0/livenessProbe&quot;}]&#39;</span>
+
+<span class="c1"># Add a new element to a positional array</span>
+kubectl patch sa default --type<span class="o">=</span><span class="s1">&#39;json&#39;</span> -p<span class="o">=</span><span class="s1">&#39;[{&quot;op&quot;: &quot;add&quot;, &quot;path&quot;: &quot;/secrets/1&quot;, &quot;value&quot;: {&quot;name&quot;: &quot;whatever&quot; } }]&#39;</span>
+</code></pre></div>
+
+<h2>Editing resources</h2>
+<p>Edit any API resource in your preferred editor.</p>
+<div class="highlight"><pre><span></span><code>kubectl edit svc/docker-registry                      <span class="c1"># Edit the service named docker-registry</span>
+<span class="nv">KUBE_EDITOR</span><span class="o">=</span><span class="s2">&quot;nano&quot;</span> kubectl edit svc/docker-registry   <span class="c1"># Use an alternative editor</span>
+</code></pre></div>
+
+<h2>Scaling resources</h2>
+<div class="highlight"><pre><span></span><code>kubectl scale --replicas<span class="o">=</span><span class="m">3</span> rs/foo                                 <span class="c1"># Scale a replicaset named &#39;foo&#39; to 3</span>
+kubectl scale --replicas<span class="o">=</span><span class="m">3</span> -f foo.yaml                            <span class="c1"># Scale a resource specified in &quot;foo.yaml&quot; to 3</span>
+kubectl scale --current-replicas<span class="o">=</span><span class="m">2</span> --replicas<span class="o">=</span><span class="m">3</span> deployment/mysql  <span class="c1"># If the deployment named mysql&#39;s current size is 2, scale mysql to 3</span>
+kubectl scale --replicas<span class="o">=</span><span class="m">5</span> rc/foo rc/bar rc/baz                   <span class="c1"># Scale multiple replication controllers</span>
+</code></pre></div>
+
+<h2>Deleting resources</h2>
+<div class="highlight"><pre><span></span><code>kubectl delete -f ./pod.json                                              <span class="c1"># Delete a pod using the type and name specified in pod.json</span>
+kubectl delete pod,service baz foo                                        <span class="c1"># Delete pods and services with same names &quot;baz&quot; and &quot;foo&quot;</span>
+kubectl delete pods,services -l <span class="nv">name</span><span class="o">=</span>myLabel                              <span class="c1"># Delete pods and services with label name=myLabel</span>
+kubectl -n my-ns delete pod,svc --all                                      <span class="c1"># Delete all pods and services in namespace my-ns,</span>
+<span class="c1"># Delete all pods matching the awk pattern1 or pattern2</span>
+kubectl get pods  -n mynamespace --no-headers<span class="o">=</span><span class="nb">true</span> <span class="p">|</span> awk <span class="s1">&#39;/pattern1|pattern2/{print $1}&#39;</span> <span class="p">|</span> xargs  kubectl delete -n mynamespace pod
+</code></pre></div>
+
+<h2>Interacting with running Pods</h2>
+<div class="highlight"><pre><span></span><code>kubectl logs my-pod                                 <span class="c1"># dump pod logs (stdout)</span>
+kubectl logs -l <span class="nv">name</span><span class="o">=</span>myLabel                        <span class="c1"># dump pod logs, with label name=myLabel (stdout)</span>
+kubectl logs my-pod --previous                      <span class="c1"># dump pod logs (stdout) for a previous instantiation of a container</span>
+kubectl logs my-pod -c my-container                 <span class="c1"># dump pod container logs (stdout, multi-container case)</span>
+kubectl logs -l <span class="nv">name</span><span class="o">=</span>myLabel -c my-container        <span class="c1"># dump pod logs, with label name=myLabel (stdout)</span>
+kubectl logs my-pod -c my-container --previous      <span class="c1"># dump pod container logs (stdout, multi-container case) for a previous instantiation of a container</span>
+kubectl logs -f my-pod                              <span class="c1"># stream pod logs (stdout)</span>
+kubectl logs -f my-pod -c my-container              <span class="c1"># stream pod container logs (stdout, multi-container case)</span>
+kubectl logs -f -l <span class="nv">name</span><span class="o">=</span>myLabel --all-containers    <span class="c1"># stream all pods logs with label name=myLabel (stdout)</span>
+kubectl run -i --tty busybox --image<span class="o">=</span>busybox -- sh  <span class="c1"># Run pod as interactive shell</span>
+kubectl run nginx --image<span class="o">=</span>nginx -n 
+mynamespace                                         <span class="c1"># Run pod nginx in a specific namespace</span>
+kubectl run nginx --image<span class="o">=</span>nginx                     <span class="c1"># Run pod nginx and write its spec into a file called pod.yaml</span>
+--dry-run<span class="o">=</span>client -o yaml &gt; pod.yaml
+
+kubectl attach my-pod -i                            <span class="c1"># Attach to Running Container</span>
+kubectl port-forward my-pod <span class="m">5000</span>:6000               <span class="c1"># Listen on port 5000 on the local machine and forward to port 6000 on my-pod</span>
+kubectl <span class="nb">exec</span> my-pod -- ls /                         <span class="c1"># Run command in existing pod (1 container case)</span>
+kubectl <span class="nb">exec</span> --stdin --tty my-pod -- /bin/sh        <span class="c1"># Interactive shell access to a running pod (1 container case) </span>
+kubectl <span class="nb">exec</span> my-pod -c my-container -- ls /         <span class="c1"># Run command in existing pod (multi-container case)</span>
+kubectl top pod POD_NAME --containers               <span class="c1"># Show metrics for a given pod and its containers</span>
+kubectl top pod POD_NAME --sort-by<span class="o">=</span>cpu              <span class="c1"># Show metrics for a given pod and sort it by &#39;cpu&#39; or &#39;memory&#39;</span>
+</code></pre></div>
+
+<h2>Interacting with Deployments and Services</h2>
+<div class="highlight"><pre><span></span><code>kubectl logs deploy/my-deployment                         <span class="c1"># dump Pod logs for a Deployment (single-container case)</span>
+kubectl logs deploy/my-deployment -c my-container         <span class="c1"># dump Pod logs for a Deployment (multi-container case)</span>
+
+kubectl port-forward svc/my-service <span class="m">5000</span>                  <span class="c1"># listen on local port 5000 and forward to port 5000 on Service backend</span>
+kubectl port-forward svc/my-service <span class="m">5000</span>:my-service-port  <span class="c1"># listen on local port 5000 and forward to Service target port with name &lt;my-service-port&gt;</span>
+
+kubectl port-forward deploy/my-deployment <span class="m">5000</span>:6000       <span class="c1"># listen on local port 5000 and forward to port 6000 on a Pod created by &lt;my-deployment&gt;</span>
+kubectl <span class="nb">exec</span> deploy/my-deployment -- ls                   <span class="c1"># run command in first Pod and first container in Deployment (single- or multi-container cases)</span>
+</code></pre></div>
+
+<h2>Interacting with Nodes and cluster</h2>
+<div class="highlight"><pre><span></span><code>kubectl cordon my-node                                                <span class="c1"># Mark my-node as unschedulable</span>
+kubectl drain my-node                                                 <span class="c1"># Drain my-node in preparation for maintenance</span>
+kubectl uncordon my-node                                              <span class="c1"># Mark my-node as schedulable</span>
+kubectl top node my-node                                              <span class="c1"># Show metrics for a given node</span>
+kubectl cluster-info                                                  <span class="c1"># Display addresses of the master and services</span>
+kubectl cluster-info dump                                             <span class="c1"># Dump current cluster state to stdout</span>
+kubectl cluster-info dump --output-directory<span class="o">=</span>/path/to/cluster-state   <span class="c1"># Dump current cluster state to /path/to/cluster-state</span>
+
+<span class="c1"># If a taint with that key and effect already exists, its value is replaced as specified.</span>
+kubectl taint nodes foo <span class="nv">dedicated</span><span class="o">=</span>special-user:NoSchedule
+</code></pre></div>
+
+<h3>Resource types</h3>
+<p>List all supported resource types along with their shortnames, <a href="/docs/concepts/overview/kubernetes-api/#api-groups-and-versioning">API group</a>, whether they are <a href="/docs/concepts/overview/working-with-objects/namespaces">namespaced</a>, and <a href="/docs/concepts/overview/working-with-objects/kubernetes-objects">Kind</a>:</p>
+<div class="highlight"><pre><span></span><code>kubectl api-resources
+</code></pre></div>
+
+<p>Other operations for exploring API resources:</p>
+<div class="highlight"><pre><span></span><code>kubectl api-resources --namespaced<span class="o">=</span><span class="nb">true</span>      <span class="c1"># All namespaced resources</span>
+kubectl api-resources --namespaced<span class="o">=</span><span class="nb">false</span>     <span class="c1"># All non-namespaced resources</span>
+kubectl api-resources -o name                <span class="c1"># All resources with simple output (only the resource name)</span>
+kubectl api-resources -o wide                <span class="c1"># All resources with expanded (aka &quot;wide&quot;) output</span>
+kubectl api-resources --verbs<span class="o">=</span>list,get       <span class="c1"># All resources that support the &quot;list&quot; and &quot;get&quot; request verbs</span>
+kubectl api-resources --api-group<span class="o">=</span>extensions <span class="c1"># All resources in the &quot;extensions&quot; API group</span>
+</code></pre></div>
+
+<h3>Formatting output</h3>
+<p>To output details to your terminal window in a specific format, add the <code>-o</code> (or <code>--output</code>) flag to a supported <code>kubectl</code> command.</p>
+<table>
+<thead>
+<tr>
+<th>Output format</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-o=custom-columns=&lt;spec&gt;</code></td>
+<td>Print a table using a comma separated list of custom columns</td>
+</tr>
+<tr>
+<td><code>-o=custom-columns-file=&lt;filename&gt;</code></td>
+<td>Print a table using the custom columns template in the <code>&lt;filename&gt;</code> file</td>
+</tr>
+<tr>
+<td><code>-o=json</code></td>
+<td>Output a JSON formatted API object</td>
+</tr>
+<tr>
+<td><code>-o=jsonpath=&lt;template&gt;</code></td>
+<td>Print the fields defined in a <a href="/docs/reference/kubectl/jsonpath">jsonpath</a> expression</td>
+</tr>
+<tr>
+<td><code>-o=jsonpath-file=&lt;filename&gt;</code></td>
+<td>Print the fields defined by the <a href="/docs/reference/kubectl/jsonpath">jsonpath</a> expression in the <code>&lt;filename&gt;</code> file</td>
+</tr>
+<tr>
+<td><code>-o=name</code></td>
+<td>Print only the resource name and nothing else</td>
+</tr>
+<tr>
+<td><code>-o=wide</code></td>
+<td>Output in the plain-text format with any additional information, and for pods, the node name is included</td>
+</tr>
+<tr>
+<td><code>-o=yaml</code></td>
+<td>Output a YAML formatted API object</td>
+</tr>
+</tbody>
+</table>
+<p>Examples using <code>-o=custom-columns</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># All images running in a cluster</span>
+kubectl get pods -A -o<span class="o">=</span>custom-columns<span class="o">=</span><span class="s1">&#39;DATA:spec.containers[*].image&#39;</span>
+
+<span class="c1"># All images running in namespace: default, grouped by Pod</span>
+kubectl get pods --namespace default --output<span class="o">=</span>custom-columns<span class="o">=</span><span class="s2">&quot;NAME:.metadata.name,IMAGE:.spec.containers[*].image&quot;</span>
+
+ <span class="c1"># All images excluding &quot;k8s.gcr.io/coredns:1.6.2&quot;</span>
+kubectl get pods -A -o<span class="o">=</span>custom-columns<span class="o">=</span><span class="s1">&#39;DATA:spec.containers[?(@.image!=&quot;k8s.gcr.io/coredns:1.6.2&quot;)].image&#39;</span>
+
+<span class="c1"># All fields under metadata regardless of name</span>
+kubectl get pods -A -o<span class="o">=</span>custom-columns<span class="o">=</span><span class="s1">&#39;DATA:metadata.*&#39;</span>
+</code></pre></div>
+
+<p>More examples in the kubectl <a href="/docs/reference/kubectl/overview/#custom-columns">reference documentation</a>.</p>
+<h3>Kubectl output verbosity and debugging</h3>
+<p>Kubectl verbosity is controlled with the <code>-v</code> or <code>--v</code> flags followed by an integer representing the log level. General Kubernetes logging conventions and the associated log levels are described <a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-instrumentation/logging.md">here</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Verbosity</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--v=0</code></td>
+<td>Generally useful for this to <em>always</em> be visible to a cluster operator.</td>
+</tr>
+<tr>
+<td><code>--v=1</code></td>
+<td>A reasonable default log level if you don't want verbosity.</td>
+</tr>
+<tr>
+<td><code>--v=2</code></td>
+<td>Useful steady state information about the service and important log messages that may correlate to significant changes in the system. This is the recommended default log level for most systems.</td>
+</tr>
+<tr>
+<td><code>--v=3</code></td>
+<td>Extended information about changes.</td>
+</tr>
+<tr>
+<td><code>--v=4</code></td>
+<td>Debug level verbosity.</td>
+</tr>
+<tr>
+<td><code>--v=5</code></td>
+<td>Trace level verbosity.</td>
+</tr>
+<tr>
+<td><code>--v=6</code></td>
+<td>Display requested resources.</td>
+</tr>
+<tr>
+<td><code>--v=7</code></td>
+<td>Display HTTP request headers.</td>
+</tr>
+<tr>
+<td><code>--v=8</code></td>
+<td>Display HTTP request contents.</td>
+</tr>
+<tr>
+<td><code>--v=9</code></td>
+<td>Display HTTP request contents without truncation of contents.</td>
+</tr>
+</tbody>
+</table>
+<h3>See more community <a href="https://github.com/dennyzhang/cheatsheet-kubernetes-A4">kubectl cheatsheets</a>.</h3>
+            </div>
+            <!-- /.entry-content -->
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+<!-- Sidebar -->
+<section class="well well-sm">
+  <ul class="list-group list-group-flush">
+
+<!-- Sidebar/Social -->
+<li class="list-group-item">
+  <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+  <ul class="list-group" id="social">
+    <li class="list-group-item"><a href="#"><i class="fa fa-you-can-add-links-in-your-config-file-square fa-lg"></i> You can add links in your config file</a></li>
+    <li class="list-group-item"><a href="#"><i class="fa fa-another-social-link-square fa-lg"></i> Another social link</a></li>
+  </ul>
+</li>
+<!-- End Sidebar/Social -->
+
+<!-- Sidebar/Links -->
+<li class="list-group-item">
+  <h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
+  <ul class="list-group" id="links">
+    <li class="list-group-item">
+      <a href="https://getpelican.com/" target="_blank">Pelican</a>
+    </li>
+    <li class="list-group-item">
+      <a href="https://www.python.org/" target="_blank">Python.org</a>
+    </li>
+    <li class="list-group-item">
+      <a href="https://palletsprojects.com/p/jinja/" target="_blank">Jinja2</a>
+    </li>
+    <li class="list-group-item">
+      <a href="#" target="_blank">You can modify those links in your config file</a>
+    </li>
+  </ul>
+</li>
+<!-- End Sidebar/Links -->
+  </ul>
+</section>
+<!-- End Sidebar -->            </aside>
+        </div>
+    </div>
+</div>
+<!-- End Content Container -->
+
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2021 Bill Yang
+            &middot; Powered by <a href="https://github.com/getpelican/pelican-themes/tree/master/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="/theme/js/respond.min.js"></script>
+
+
+
+
+</body>
+</html>

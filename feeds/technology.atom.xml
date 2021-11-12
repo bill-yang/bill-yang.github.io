@@ -1,0 +1,746 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>My Website - Technology</title><link href="/" rel="alternate"></link><link href="/feeds/technology.atom.xml" rel="self"></link><id>/</id><updated>2021-11-12T00:00:00-08:00</updated><entry><title>Kubernetes Tips</title><link href="/kubernetes-tips.html" rel="alternate"></link><published>2021-11-12T00:00:00-08:00</published><updated>2021-11-12T00:00:00-08:00</updated><author><name>Bill Yang</name></author><id>tag:None,2021-11-12:/kubernetes-tips.html</id><summary type="html">&lt;p&gt;Tips for Kubernetes&lt;/p&gt;</summary><content type="html">&lt;h1&gt;How to connect to Amazon EKS cluster using kubectl?&lt;/h1&gt;
+&lt;p&gt;Issue: I Amazon EKS cluster, but I can't connect to it through &lt;code&gt;kubectl&lt;/code&gt;.&lt;/p&gt;
+&lt;h2&gt;Solution:&lt;/h2&gt;
+&lt;p&gt;Suppose &lt;code&gt;aws-cli&lt;/code&gt;, &lt;code&gt;aws-iam-authenticator&lt;/code&gt; and &lt;code&gt;kubernetes&lt;/code&gt; have been installed properly.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Verify that AWS CLI version is the latest one:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;$ aws --version&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Configure aws:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;$ aws configure --profile eks-dev&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This command will generate a config file under ~/.aws/config, e.g.:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;[default]&lt;/span&gt;
+&lt;span class="na"&gt;region&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;us-west-2&lt;/span&gt;
+&lt;span class="na"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;json&lt;/span&gt;
+
+&lt;span class="k"&gt;[eks-dev]&lt;/span&gt;
+&lt;span class="na"&gt;region&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;us-east-1&lt;/span&gt;
+&lt;span class="na"&gt;output&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;text&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;and credential file withe aws access information.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Test configure for aws user and EKS cluster&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;$ aws iam get-user
+$ aws sts get-caller-identity&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Check if has any clusters:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;$ aws eks list-clusters&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create or update kubeconfig file for EKS cluster&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;$ aws eks --region us-west-2 update-kubeconfig --name eks-cluster-name --role-arn arn:aws:iam::123456789:role/eks-cluster-role&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This will create or update kubernetes config file under ~/.kube/config&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Check pods on EKS:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;$ kubectl get pods --kubeconfig ~/.kube/config&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Test kubernetes:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;$ kubectl get svc&lt;/code&gt; &lt;/p&gt;
+&lt;p&gt;Example output:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;NAME             TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+svc/kubernetes   ClusterIP   10.100.0.1   &amp;lt;none&amp;gt;        443/TCP   1m
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;Troubleshoot:&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Remove ~/.kube/config file if got &lt;code&gt;'NoneType' object is not iterable&lt;/code&gt; error message when update kubernetes config file.&lt;/li&gt;
+&lt;/ol&gt;</content><category term="Technology"></category><category term="kubernetes"></category><category term="k8s"></category><category term="tips"></category></entry><entry><title>Kubernetes Cheat Sheet</title><link href="/kubernetes-cheat-sheet.html" rel="alternate"></link><published>2021-11-11T00:00:00-08:00</published><updated>2021-11-11T00:00:00-08:00</updated><author><name>Bill Yang</name></author><id>tag:None,2021-11-11:/kubernetes-cheat-sheet.html</id><summary type="html">&lt;p&gt;Kubernetes Cheat Sheet&lt;/p&gt;</summary><content type="html">&lt;h1&gt;kubectl Cheat Sheet&lt;/h1&gt;
+&lt;h2&gt;&lt;a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/"&gt;Original link&lt;/a&gt;&lt;/h2&gt;
+&lt;!-- overview --&gt;
+
+&lt;p&gt;This page contains a list of commonly used &lt;code&gt;kubectl&lt;/code&gt; commands and flags.&lt;/p&gt;
+&lt;!-- body --&gt;
+
+&lt;h2&gt;Kubectl autocomplete&lt;/h2&gt;
+&lt;h3&gt;BASH&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;source&lt;/span&gt; &amp;lt;&lt;span class="o"&gt;(&lt;/span&gt;kubectl completion bash&lt;span class="o"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# setup autocomplete in bash into the current shell, bash-completion package should be installed first.&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;source &amp;lt;(kubectl completion bash)&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; ~/.bashrc &lt;span class="c1"&gt;# add autocomplete permanently to your bash shell.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;You can also use a shorthand alias for &lt;code&gt;kubectl&lt;/code&gt; that also works with completion:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;alias&lt;/span&gt; &lt;span class="nv"&gt;k&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;kubectl
+&lt;span class="nb"&gt;complete&lt;/span&gt; -F __start_kubectl k
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;ZSH&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nb"&gt;source&lt;/span&gt; &amp;lt;&lt;span class="o"&gt;(&lt;/span&gt;kubectl completion zsh&lt;span class="o"&gt;)&lt;/span&gt;  &lt;span class="c1"&gt;# setup autocomplete in zsh into the current shell&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;[[ &lt;/span&gt;&lt;span class="nv"&gt;$commands&lt;/span&gt;&lt;span class="s2"&gt;[kubectl] ]] &amp;amp;&amp;amp; source &amp;lt;(kubectl completion zsh)&amp;quot;&lt;/span&gt; &amp;gt;&amp;gt; ~/.zshrc &lt;span class="c1"&gt;# add autocomplete permanently to your zsh shell&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Kubectl context and configuration&lt;/h2&gt;
+&lt;p&gt;Set which Kubernetes cluster &lt;code&gt;kubectl&lt;/code&gt; communicates with and modifies configuration
+information. See &lt;a href="/docs/tasks/access-application-cluster/configure-access-multiple-clusters/"&gt;Authenticating Across Clusters with kubeconfig&lt;/a&gt; documentation for
+detailed config file information.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;kubectl config view &lt;span class="c1"&gt;# Show Merged kubeconfig settings.&lt;/span&gt;
+
+&lt;span class="c1"&gt;# use multiple kubeconfig files at the same time and view merged config&lt;/span&gt;
+&lt;span class="nv"&gt;KUBECONFIG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;~/.kube/config:~/.kube/kubconfig2 
+
+kubectl config view
+
+&lt;span class="c1"&gt;# get the password for the e2e user&lt;/span&gt;
+kubectl config view -o &lt;span class="nv"&gt;jsonpath&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;{.users[?(@.name == &amp;quot;e2e&amp;quot;)].user.password}&amp;#39;&lt;/span&gt;
+
+kubectl config view -o &lt;span class="nv"&gt;jsonpath&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;{.users[].name}&amp;#39;&lt;/span&gt;    &lt;span class="c1"&gt;# display the first user&lt;/span&gt;
+kubectl config view -o &lt;span class="nv"&gt;jsonpath&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;{.users[*].name}&amp;#39;&lt;/span&gt;   &lt;span class="c1"&gt;# get a list of users&lt;/span&gt;
+kubectl config get-contexts                          &lt;span class="c1"&gt;# display list of contexts &lt;/span&gt;
+kubectl config current-context                       &lt;span class="c1"&gt;# display the current-context&lt;/span&gt;
+kubectl config use-context my-cluster-name           &lt;span class="c1"&gt;# set the default context to my-cluster-name&lt;/span&gt;
+
+&lt;span class="c1"&gt;# add a new user to your kubeconf that supports basic auth&lt;/span&gt;
+kubectl config set-credentials kubeuser/foo.kubernetes.com --username&lt;span class="o"&gt;=&lt;/span&gt;kubeuser --password&lt;span class="o"&gt;=&lt;/span&gt;kubepassword
+
+&lt;span class="c1"&gt;# permanently save the namespace for all subsequent kubectl commands in that context.&lt;/span&gt;
+kubectl config set-context --current --namespace&lt;span class="o"&gt;=&lt;/span&gt;ggckad-s2
+
+&lt;span class="c1"&gt;# set a context utilizing a specific username and namespace.&lt;/span&gt;
+kubectl config set-context gce --user&lt;span class="o"&gt;=&lt;/span&gt;cluster-admin --namespace&lt;span class="o"&gt;=&lt;/span&gt;foo &lt;span class="se"&gt;\&lt;/span&gt;
+  &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; kubectl config use-context gce
+
+kubectl config &lt;span class="nb"&gt;unset&lt;/span&gt; users.foo                       &lt;span class="c1"&gt;# delete user foo&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Kubectl apply&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;apply&lt;/code&gt; manages applications through files defining Kubernetes resources. It creates and updates resources in a cluster through running &lt;code&gt;kubectl apply&lt;/code&gt;. This is the recommended way of managing Kubernetes applications on production. See &lt;a href="https://kubectl.docs.kubernetes.io"&gt;Kubectl Book&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Creating objects&lt;/h2&gt;
+&lt;p&gt;Kubernetes manifests can be defined in YAML or JSON. The file extension &lt;code&gt;.yaml&lt;/code&gt;,
+&lt;code&gt;.yml&lt;/code&gt;, and &lt;code&gt;.json&lt;/code&gt; can be used.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;kubectl apply -f ./my-manifest.yaml            &lt;span class="c1"&gt;# create resource(s)&lt;/span&gt;
+kubectl apply -f ./my1.yaml -f ./my2.yaml      &lt;span class="c1"&gt;# create from multiple files&lt;/span&gt;
+kubectl apply -f ./dir                         &lt;span class="c1"&gt;# create resource(s) in all manifest files in dir&lt;/span&gt;
+kubectl apply -f https://git.io/vPieo          &lt;span class="c1"&gt;# create resource(s) from url&lt;/span&gt;
+kubectl create deployment nginx --image&lt;span class="o"&gt;=&lt;/span&gt;nginx  &lt;span class="c1"&gt;# start a single instance of nginx&lt;/span&gt;
+
+&lt;span class="c1"&gt;# create a Job which prints &amp;quot;Hello World&amp;quot;&lt;/span&gt;
+kubectl create job hello --image&lt;span class="o"&gt;=&lt;/span&gt;busybox -- &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Hello World&amp;quot;&lt;/span&gt; 
+
+&lt;span class="c1"&gt;# create a CronJob that prints &amp;quot;Hello World&amp;quot; every minute&lt;/span&gt;
+kubectl create cronjob hello --image&lt;span class="o"&gt;=&lt;/span&gt;busybox   --schedule&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;*/1 * * * *&amp;quot;&lt;/span&gt; -- &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;Hello World&amp;quot;&lt;/span&gt;    
+
+kubectl explain pods                           &lt;span class="c1"&gt;# get the documentation for pod manifests&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Create multiple YAML objects from stdin&lt;/span&gt;
+cat &lt;span class="s"&gt;&amp;lt;&amp;lt;EOF | kubectl apply -f -&lt;/span&gt;
+&lt;span class="s"&gt;apiVersion: v1&lt;/span&gt;
+&lt;span class="s"&gt;kind: Pod&lt;/span&gt;
+&lt;span class="s"&gt;metadata:&lt;/span&gt;
+&lt;span class="s"&gt;  name: busybox-sleep&lt;/span&gt;
+&lt;span class="s"&gt;spec:&lt;/span&gt;
+&lt;span class="s"&gt;  containers:&lt;/span&gt;
+&lt;span class="s"&gt;  - name: busybox&lt;/span&gt;
+&lt;span class="s"&gt;    image: busybox&lt;/span&gt;
+&lt;span class="s"&gt;    args:&lt;/span&gt;
+&lt;span class="s"&gt;    - sleep&lt;/span&gt;
+&lt;span class="s"&gt;    - &amp;quot;1000000&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;---&lt;/span&gt;
+&lt;span class="s"&gt;apiVersion: v1&lt;/span&gt;
+&lt;span class="s"&gt;kind: Pod&lt;/span&gt;
+&lt;span class="s"&gt;metadata:&lt;/span&gt;
+&lt;span class="s"&gt;  name: busybox-sleep-less&lt;/span&gt;
+&lt;span class="s"&gt;spec:&lt;/span&gt;
+&lt;span class="s"&gt;  containers:&lt;/span&gt;
+&lt;span class="s"&gt;  - name: busybox&lt;/span&gt;
+&lt;span class="s"&gt;    image: busybox&lt;/span&gt;
+&lt;span class="s"&gt;    args:&lt;/span&gt;
+&lt;span class="s"&gt;    - sleep&lt;/span&gt;
+&lt;span class="s"&gt;    - &amp;quot;1000&amp;quot;&lt;/span&gt;
+&lt;span class="s"&gt;EOF&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Create a secret with several keys&lt;/span&gt;
+cat &lt;span class="s"&gt;&amp;lt;&amp;lt;EOF | kubectl apply -f -&lt;/span&gt;
+&lt;span class="s"&gt;apiVersion: v1&lt;/span&gt;
+&lt;span class="s"&gt;kind: Secret&lt;/span&gt;
+&lt;span class="s"&gt;metadata:&lt;/span&gt;
+&lt;span class="s"&gt;  name: mysecret&lt;/span&gt;
+&lt;span class="s"&gt;type: Opaque&lt;/span&gt;
+&lt;span class="s"&gt;data:&lt;/span&gt;
+&lt;span class="s"&gt;  password: $(echo -n &amp;quot;s33msi4&amp;quot; | base64 -w0)&lt;/span&gt;
+&lt;span class="s"&gt;  username: $(echo -n &amp;quot;jane&amp;quot; | base64 -w0)&lt;/span&gt;
+&lt;span class="s"&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Viewing, finding resources&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# Get commands with basic output&lt;/span&gt;
+kubectl get services                          &lt;span class="c1"&gt;# List all services in the namespace&lt;/span&gt;
+kubectl get pods --all-namespaces             &lt;span class="c1"&gt;# List all pods in all namespaces&lt;/span&gt;
+kubectl get pods -o wide                      &lt;span class="c1"&gt;# List all pods in the current namespace, with more details&lt;/span&gt;
+kubectl get deployment my-dep                 &lt;span class="c1"&gt;# List a particular deployment&lt;/span&gt;
+kubectl get pods                              &lt;span class="c1"&gt;# List all pods in the namespace&lt;/span&gt;
+kubectl get pod my-pod -o yaml                &lt;span class="c1"&gt;# Get a pod&amp;#39;s YAML&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Describe commands with verbose output&lt;/span&gt;
+kubectl describe nodes my-node
+kubectl describe pods my-pod
+
+&lt;span class="c1"&gt;# List Services Sorted by Name&lt;/span&gt;
+kubectl get services --sort-by&lt;span class="o"&gt;=&lt;/span&gt;.metadata.name
+
+&lt;span class="c1"&gt;# List pods Sorted by Restart Count&lt;/span&gt;
+kubectl get pods --sort-by&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;.status.containerStatuses[0].restartCount&amp;#39;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# List PersistentVolumes sorted by capacity&lt;/span&gt;
+kubectl get pv --sort-by&lt;span class="o"&gt;=&lt;/span&gt;.spec.capacity.storage
+
+&lt;span class="c1"&gt;# Get the version label of all pods with label app=cassandra&lt;/span&gt;
+kubectl get pods --selector&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;app&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;cassandra -o &lt;span class="se"&gt;\&lt;/span&gt;
+  &lt;span class="nv"&gt;jsonpath&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;{.items[*].metadata.labels.version}&amp;#39;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Retrieve the value of a key with dots, e.g. &amp;#39;ca.crt&amp;#39;&lt;/span&gt;
+kubectl get configmap myconfig &lt;span class="se"&gt;\&lt;/span&gt;
+  -o &lt;span class="nv"&gt;jsonpath&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;{.data.ca\.crt}&amp;#39;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Get all worker nodes (use a selector to exclude results that have a label&lt;/span&gt;
+&lt;span class="c1"&gt;# named &amp;#39;node-role.kubernetes.io/master&amp;#39;)&lt;/span&gt;
+kubectl get node --selector&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;!node-role.kubernetes.io/master&amp;#39;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Get all running pods in the namespace&lt;/span&gt;
+kubectl get pods --field-selector&lt;span class="o"&gt;=&lt;/span&gt;status.phase&lt;span class="o"&gt;=&lt;/span&gt;Running
+
+&lt;span class="c1"&gt;# Get ExternalIPs of all nodes&lt;/span&gt;
+kubectl get nodes -o &lt;span class="nv"&gt;jsonpath&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;{.items[*].status.addresses[?(@.type==&amp;quot;ExternalIP&amp;quot;)].address}&amp;#39;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# List Names of Pods that belong to Particular RC&lt;/span&gt;
+&lt;span class="c1"&gt;# &amp;quot;jq&amp;quot; command useful for transformations that are too complex for jsonpath, it can be found at https://stedolan.github.io/jq/&lt;/span&gt;
+&lt;span class="nv"&gt;sel&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;kubectl get rc my-rc --output&lt;span class="o"&gt;=&lt;/span&gt;json &lt;span class="p"&gt;|&lt;/span&gt; jq -j &lt;span class="s1"&gt;&amp;#39;.spec.selector | to_entries | .[] | &amp;quot;\(.key)=\(.value),&amp;quot;&amp;#39;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="p"&gt;%?&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;
+&lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="k"&gt;$(&lt;/span&gt;kubectl get pods --selector&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$sel&lt;/span&gt; --output&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;jsonpath&lt;/span&gt;&lt;span class="o"&gt;={&lt;/span&gt;.items..metadata.name&lt;span class="o"&gt;}&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Show labels for all pods (or any other Kubernetes object that supports labelling)&lt;/span&gt;
+kubectl get pods --show-labels
+
+&lt;span class="c1"&gt;# Check which nodes are ready&lt;/span&gt;
+&lt;span class="nv"&gt;JSONPATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}&amp;#39;&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+ &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; kubectl get nodes -o &lt;span class="nv"&gt;jsonpath&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="nv"&gt;$JSONPATH&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; grep &lt;span class="s2"&gt;&amp;quot;Ready=True&amp;quot;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Output decoded secrets without external tools&lt;/span&gt;
+kubectl get secret my-secret -o go-template&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;{{range $k,$v := .data}}{{&amp;quot;### &amp;quot;}}{{$k}}{{&amp;quot;\n&amp;quot;}}{{$v|base64decode}}{{&amp;quot;\n\n&amp;quot;}}{{end}}&amp;#39;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# List all Secrets currently in use by a pod&lt;/span&gt;
+kubectl get pods -o json &lt;span class="p"&gt;|&lt;/span&gt; jq &lt;span class="s1"&gt;&amp;#39;.items[].spec.containers[].env[]?.valueFrom.secretKeyRef.name&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; grep -v null &lt;span class="p"&gt;|&lt;/span&gt; sort &lt;span class="p"&gt;|&lt;/span&gt; uniq
+
+&lt;span class="c1"&gt;# List all containerIDs of initContainer of all pods&lt;/span&gt;
+&lt;span class="c1"&gt;# Helpful when cleaning up stopped containers, while avoiding removal of initContainers.&lt;/span&gt;
+kubectl get pods --all-namespaces -o &lt;span class="nv"&gt;jsonpath&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;{range .items[*].status.initContainerStatuses[*]}{.containerID}{&amp;quot;\n&amp;quot;}{end}&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; cut -d/ -f3
+
+&lt;span class="c1"&gt;# List Events sorted by timestamp&lt;/span&gt;
+kubectl get events --sort-by&lt;span class="o"&gt;=&lt;/span&gt;.metadata.creationTimestamp
+
+&lt;span class="c1"&gt;# Compares the current state of the cluster against the state that the cluster would be in if the manifest was applied.&lt;/span&gt;
+kubectl diff -f ./my-manifest.yaml
+
+&lt;span class="c1"&gt;# Produce a period-delimited tree of all keys returned for nodes&lt;/span&gt;
+&lt;span class="c1"&gt;# Helpful when locating a key within a complex nested JSON structure&lt;/span&gt;
+kubectl get nodes -o json &lt;span class="p"&gt;|&lt;/span&gt; jq -c &lt;span class="s1"&gt;&amp;#39;path(..)|[.[]|tostring]|join(&amp;quot;.&amp;quot;)&amp;#39;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Produce a period-delimited tree of all keys returned for pods, etc&lt;/span&gt;
+kubectl get pods -o json &lt;span class="p"&gt;|&lt;/span&gt; jq -c &lt;span class="s1"&gt;&amp;#39;path(..)|[.[]|tostring]|join(&amp;quot;.&amp;quot;)&amp;#39;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Produce ENV for all pods, assuming you have a default container for the pods, default namespace and the `env` command is supported.&lt;/span&gt;
+&lt;span class="c1"&gt;# Helpful when running any supported command across all pods, not just `env`&lt;/span&gt;
+&lt;span class="k"&gt;for&lt;/span&gt; pod &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="k"&gt;$(&lt;/span&gt;kubectl get po --output&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;jsonpath&lt;/span&gt;&lt;span class="o"&gt;={&lt;/span&gt;.items..metadata.name&lt;span class="o"&gt;}&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="nv"&gt;$pod&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; kubectl &lt;span class="nb"&gt;exec&lt;/span&gt; -it &lt;span class="nv"&gt;$pod&lt;/span&gt; -- env&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Updating resources&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;kubectl &lt;span class="nb"&gt;set&lt;/span&gt; image deployment/frontend &lt;span class="nv"&gt;www&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;image:v2               &lt;span class="c1"&gt;# Rolling update &amp;quot;www&amp;quot; containers of &amp;quot;frontend&amp;quot; deployment, updating the image&lt;/span&gt;
+kubectl rollout &lt;span class="nb"&gt;history&lt;/span&gt; deployment/frontend                      &lt;span class="c1"&gt;# Check the history of deployments including the revision &lt;/span&gt;
+kubectl rollout undo deployment/frontend                         &lt;span class="c1"&gt;# Rollback to the previous deployment&lt;/span&gt;
+kubectl rollout undo deployment/frontend --to-revision&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt;         &lt;span class="c1"&gt;# Rollback to a specific revision&lt;/span&gt;
+kubectl rollout status -w deployment/frontend                    &lt;span class="c1"&gt;# Watch rolling update status of &amp;quot;frontend&amp;quot; deployment until completion&lt;/span&gt;
+kubectl rollout restart deployment/frontend                      &lt;span class="c1"&gt;# Rolling restart of the &amp;quot;frontend&amp;quot; deployment&lt;/span&gt;
+
+
+cat pod.json &lt;span class="p"&gt;|&lt;/span&gt; kubectl replace -f -                              &lt;span class="c1"&gt;# Replace a pod based on the JSON passed into std&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Force replace, delete and then re-create the resource. Will cause a service outage.&lt;/span&gt;
+kubectl replace --force -f ./pod.json
+
+&lt;span class="c1"&gt;# Create a service for a replicated nginx, which serves on port 80 and connects to the containers on port 8000&lt;/span&gt;
+kubectl expose rc nginx --port&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;80&lt;/span&gt; --target-port&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;8000&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Update a single-container pod&amp;#39;s image version (tag) to v4&lt;/span&gt;
+kubectl get pod mypod -o yaml &lt;span class="p"&gt;|&lt;/span&gt; sed &lt;span class="s1"&gt;&amp;#39;s/\(image: myimage\):.*$/\1:v4/&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; kubectl replace -f -
+
+kubectl label pods my-pod new-label&lt;span class="o"&gt;=&lt;/span&gt;awesome                      &lt;span class="c1"&gt;# Add a Label&lt;/span&gt;
+kubectl annotate pods my-pod icon-url&lt;span class="o"&gt;=&lt;/span&gt;http://goo.gl/XXBTWq       &lt;span class="c1"&gt;# Add an annotation&lt;/span&gt;
+kubectl autoscale deployment foo --min&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; --max&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;                &lt;span class="c1"&gt;# Auto scale a deployment &amp;quot;foo&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Patching resources&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# Partially update a node&lt;/span&gt;
+kubectl patch node k8s-node-1 -p &lt;span class="s1"&gt;&amp;#39;{&amp;quot;spec&amp;quot;:{&amp;quot;unschedulable&amp;quot;:true}}&amp;#39;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Update a container&amp;#39;s image; spec.containers[*].name is required because it&amp;#39;s a merge key&lt;/span&gt;
+kubectl patch pod valid-pod -p &lt;span class="s1"&gt;&amp;#39;{&amp;quot;spec&amp;quot;:{&amp;quot;containers&amp;quot;:[{&amp;quot;name&amp;quot;:&amp;quot;kubernetes-serve-hostname&amp;quot;,&amp;quot;image&amp;quot;:&amp;quot;new image&amp;quot;}]}}&amp;#39;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Update a container&amp;#39;s image using a json patch with positional arrays&lt;/span&gt;
+kubectl patch pod valid-pod --type&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;json&amp;#39;&lt;/span&gt; -p&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;[{&amp;quot;op&amp;quot;: &amp;quot;replace&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/spec/containers/0/image&amp;quot;, &amp;quot;value&amp;quot;:&amp;quot;new image&amp;quot;}]&amp;#39;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Disable a deployment livenessProbe using a json patch with positional arrays&lt;/span&gt;
+kubectl patch deployment valid-deployment  --type json   -p&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;[{&amp;quot;op&amp;quot;: &amp;quot;remove&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/spec/template/spec/containers/0/livenessProbe&amp;quot;}]&amp;#39;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Add a new element to a positional array&lt;/span&gt;
+kubectl patch sa default --type&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;json&amp;#39;&lt;/span&gt; -p&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;[{&amp;quot;op&amp;quot;: &amp;quot;add&amp;quot;, &amp;quot;path&amp;quot;: &amp;quot;/secrets/1&amp;quot;, &amp;quot;value&amp;quot;: {&amp;quot;name&amp;quot;: &amp;quot;whatever&amp;quot; } }]&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Editing resources&lt;/h2&gt;
+&lt;p&gt;Edit any API resource in your preferred editor.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;kubectl edit svc/docker-registry                      &lt;span class="c1"&gt;# Edit the service named docker-registry&lt;/span&gt;
+&lt;span class="nv"&gt;KUBE_EDITOR&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;nano&amp;quot;&lt;/span&gt; kubectl edit svc/docker-registry   &lt;span class="c1"&gt;# Use an alternative editor&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Scaling resources&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;kubectl scale --replicas&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt; rs/foo                                 &lt;span class="c1"&gt;# Scale a replicaset named &amp;#39;foo&amp;#39; to 3&lt;/span&gt;
+kubectl scale --replicas&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt; -f foo.yaml                            &lt;span class="c1"&gt;# Scale a resource specified in &amp;quot;foo.yaml&amp;quot; to 3&lt;/span&gt;
+kubectl scale --current-replicas&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;2&lt;/span&gt; --replicas&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;3&lt;/span&gt; deployment/mysql  &lt;span class="c1"&gt;# If the deployment named mysql&amp;#39;s current size is 2, scale mysql to 3&lt;/span&gt;
+kubectl scale --replicas&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;5&lt;/span&gt; rc/foo rc/bar rc/baz                   &lt;span class="c1"&gt;# Scale multiple replication controllers&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Deleting resources&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;kubectl delete -f ./pod.json                                              &lt;span class="c1"&gt;# Delete a pod using the type and name specified in pod.json&lt;/span&gt;
+kubectl delete pod,service baz foo                                        &lt;span class="c1"&gt;# Delete pods and services with same names &amp;quot;baz&amp;quot; and &amp;quot;foo&amp;quot;&lt;/span&gt;
+kubectl delete pods,services -l &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;myLabel                              &lt;span class="c1"&gt;# Delete pods and services with label name=myLabel&lt;/span&gt;
+kubectl -n my-ns delete pod,svc --all                                      &lt;span class="c1"&gt;# Delete all pods and services in namespace my-ns,&lt;/span&gt;
+&lt;span class="c1"&gt;# Delete all pods matching the awk pattern1 or pattern2&lt;/span&gt;
+kubectl get pods  -n mynamespace --no-headers&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;true&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; awk &lt;span class="s1"&gt;&amp;#39;/pattern1|pattern2/{print $1}&amp;#39;&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; xargs  kubectl delete -n mynamespace pod
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Interacting with running Pods&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;kubectl logs my-pod                                 &lt;span class="c1"&gt;# dump pod logs (stdout)&lt;/span&gt;
+kubectl logs -l &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;myLabel                        &lt;span class="c1"&gt;# dump pod logs, with label name=myLabel (stdout)&lt;/span&gt;
+kubectl logs my-pod --previous                      &lt;span class="c1"&gt;# dump pod logs (stdout) for a previous instantiation of a container&lt;/span&gt;
+kubectl logs my-pod -c my-container                 &lt;span class="c1"&gt;# dump pod container logs (stdout, multi-container case)&lt;/span&gt;
+kubectl logs -l &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;myLabel -c my-container        &lt;span class="c1"&gt;# dump pod logs, with label name=myLabel (stdout)&lt;/span&gt;
+kubectl logs my-pod -c my-container --previous      &lt;span class="c1"&gt;# dump pod container logs (stdout, multi-container case) for a previous instantiation of a container&lt;/span&gt;
+kubectl logs -f my-pod                              &lt;span class="c1"&gt;# stream pod logs (stdout)&lt;/span&gt;
+kubectl logs -f my-pod -c my-container              &lt;span class="c1"&gt;# stream pod container logs (stdout, multi-container case)&lt;/span&gt;
+kubectl logs -f -l &lt;span class="nv"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;myLabel --all-containers    &lt;span class="c1"&gt;# stream all pods logs with label name=myLabel (stdout)&lt;/span&gt;
+kubectl run -i --tty busybox --image&lt;span class="o"&gt;=&lt;/span&gt;busybox -- sh  &lt;span class="c1"&gt;# Run pod as interactive shell&lt;/span&gt;
+kubectl run nginx --image&lt;span class="o"&gt;=&lt;/span&gt;nginx -n 
+mynamespace                                         &lt;span class="c1"&gt;# Run pod nginx in a specific namespace&lt;/span&gt;
+kubectl run nginx --image&lt;span class="o"&gt;=&lt;/span&gt;nginx                     &lt;span class="c1"&gt;# Run pod nginx and write its spec into a file called pod.yaml&lt;/span&gt;
+--dry-run&lt;span class="o"&gt;=&lt;/span&gt;client -o yaml &amp;gt; pod.yaml
+
+kubectl attach my-pod -i                            &lt;span class="c1"&gt;# Attach to Running Container&lt;/span&gt;
+kubectl port-forward my-pod &lt;span class="m"&gt;5000&lt;/span&gt;:6000               &lt;span class="c1"&gt;# Listen on port 5000 on the local machine and forward to port 6000 on my-pod&lt;/span&gt;
+kubectl &lt;span class="nb"&gt;exec&lt;/span&gt; my-pod -- ls /                         &lt;span class="c1"&gt;# Run command in existing pod (1 container case)&lt;/span&gt;
+kubectl &lt;span class="nb"&gt;exec&lt;/span&gt; --stdin --tty my-pod -- /bin/sh        &lt;span class="c1"&gt;# Interactive shell access to a running pod (1 container case) &lt;/span&gt;
+kubectl &lt;span class="nb"&gt;exec&lt;/span&gt; my-pod -c my-container -- ls /         &lt;span class="c1"&gt;# Run command in existing pod (multi-container case)&lt;/span&gt;
+kubectl top pod POD_NAME --containers               &lt;span class="c1"&gt;# Show metrics for a given pod and its containers&lt;/span&gt;
+kubectl top pod POD_NAME --sort-by&lt;span class="o"&gt;=&lt;/span&gt;cpu              &lt;span class="c1"&gt;# Show metrics for a given pod and sort it by &amp;#39;cpu&amp;#39; or &amp;#39;memory&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Interacting with Deployments and Services&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;kubectl logs deploy/my-deployment                         &lt;span class="c1"&gt;# dump Pod logs for a Deployment (single-container case)&lt;/span&gt;
+kubectl logs deploy/my-deployment -c my-container         &lt;span class="c1"&gt;# dump Pod logs for a Deployment (multi-container case)&lt;/span&gt;
+
+kubectl port-forward svc/my-service &lt;span class="m"&gt;5000&lt;/span&gt;                  &lt;span class="c1"&gt;# listen on local port 5000 and forward to port 5000 on Service backend&lt;/span&gt;
+kubectl port-forward svc/my-service &lt;span class="m"&gt;5000&lt;/span&gt;:my-service-port  &lt;span class="c1"&gt;# listen on local port 5000 and forward to Service target port with name &amp;lt;my-service-port&amp;gt;&lt;/span&gt;
+
+kubectl port-forward deploy/my-deployment &lt;span class="m"&gt;5000&lt;/span&gt;:6000       &lt;span class="c1"&gt;# listen on local port 5000 and forward to port 6000 on a Pod created by &amp;lt;my-deployment&amp;gt;&lt;/span&gt;
+kubectl &lt;span class="nb"&gt;exec&lt;/span&gt; deploy/my-deployment -- ls                   &lt;span class="c1"&gt;# run command in first Pod and first container in Deployment (single- or multi-container cases)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Interacting with Nodes and cluster&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;kubectl cordon my-node                                                &lt;span class="c1"&gt;# Mark my-node as unschedulable&lt;/span&gt;
+kubectl drain my-node                                                 &lt;span class="c1"&gt;# Drain my-node in preparation for maintenance&lt;/span&gt;
+kubectl uncordon my-node                                              &lt;span class="c1"&gt;# Mark my-node as schedulable&lt;/span&gt;
+kubectl top node my-node                                              &lt;span class="c1"&gt;# Show metrics for a given node&lt;/span&gt;
+kubectl cluster-info                                                  &lt;span class="c1"&gt;# Display addresses of the master and services&lt;/span&gt;
+kubectl cluster-info dump                                             &lt;span class="c1"&gt;# Dump current cluster state to stdout&lt;/span&gt;
+kubectl cluster-info dump --output-directory&lt;span class="o"&gt;=&lt;/span&gt;/path/to/cluster-state   &lt;span class="c1"&gt;# Dump current cluster state to /path/to/cluster-state&lt;/span&gt;
+
+&lt;span class="c1"&gt;# If a taint with that key and effect already exists, its value is replaced as specified.&lt;/span&gt;
+kubectl taint nodes foo &lt;span class="nv"&gt;dedicated&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;special-user:NoSchedule
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Resource types&lt;/h3&gt;
+&lt;p&gt;List all supported resource types along with their shortnames, &lt;a href="/docs/concepts/overview/kubernetes-api/#api-groups-and-versioning"&gt;API group&lt;/a&gt;, whether they are &lt;a href="/docs/concepts/overview/working-with-objects/namespaces"&gt;namespaced&lt;/a&gt;, and &lt;a href="/docs/concepts/overview/working-with-objects/kubernetes-objects"&gt;Kind&lt;/a&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;kubectl api-resources
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Other operations for exploring API resources:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;kubectl api-resources --namespaced&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;true&lt;/span&gt;      &lt;span class="c1"&gt;# All namespaced resources&lt;/span&gt;
+kubectl api-resources --namespaced&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nb"&gt;false&lt;/span&gt;     &lt;span class="c1"&gt;# All non-namespaced resources&lt;/span&gt;
+kubectl api-resources -o name                &lt;span class="c1"&gt;# All resources with simple output (only the resource name)&lt;/span&gt;
+kubectl api-resources -o wide                &lt;span class="c1"&gt;# All resources with expanded (aka &amp;quot;wide&amp;quot;) output&lt;/span&gt;
+kubectl api-resources --verbs&lt;span class="o"&gt;=&lt;/span&gt;list,get       &lt;span class="c1"&gt;# All resources that support the &amp;quot;list&amp;quot; and &amp;quot;get&amp;quot; request verbs&lt;/span&gt;
+kubectl api-resources --api-group&lt;span class="o"&gt;=&lt;/span&gt;extensions &lt;span class="c1"&gt;# All resources in the &amp;quot;extensions&amp;quot; API group&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Formatting output&lt;/h3&gt;
+&lt;p&gt;To output details to your terminal window in a specific format, add the &lt;code&gt;-o&lt;/code&gt; (or &lt;code&gt;--output&lt;/code&gt;) flag to a supported &lt;code&gt;kubectl&lt;/code&gt; command.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Output format&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;-o=custom-columns=&amp;lt;spec&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Print a table using a comma separated list of custom columns&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;-o=custom-columns-file=&amp;lt;filename&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Print a table using the custom columns template in the &lt;code&gt;&amp;lt;filename&amp;gt;&lt;/code&gt; file&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;-o=json&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Output a JSON formatted API object&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;-o=jsonpath=&amp;lt;template&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Print the fields defined in a &lt;a href="/docs/reference/kubectl/jsonpath"&gt;jsonpath&lt;/a&gt; expression&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;-o=jsonpath-file=&amp;lt;filename&amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Print the fields defined by the &lt;a href="/docs/reference/kubectl/jsonpath"&gt;jsonpath&lt;/a&gt; expression in the &lt;code&gt;&amp;lt;filename&amp;gt;&lt;/code&gt; file&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;-o=name&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Print only the resource name and nothing else&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;-o=wide&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Output in the plain-text format with any additional information, and for pods, the node name is included&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;-o=yaml&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Output a YAML formatted API object&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Examples using &lt;code&gt;-o=custom-columns&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# All images running in a cluster&lt;/span&gt;
+kubectl get pods -A -o&lt;span class="o"&gt;=&lt;/span&gt;custom-columns&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;DATA:spec.containers[*].image&amp;#39;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# All images running in namespace: default, grouped by Pod&lt;/span&gt;
+kubectl get pods --namespace default --output&lt;span class="o"&gt;=&lt;/span&gt;custom-columns&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;NAME:.metadata.name,IMAGE:.spec.containers[*].image&amp;quot;&lt;/span&gt;
+
+ &lt;span class="c1"&gt;# All images excluding &amp;quot;k8s.gcr.io/coredns:1.6.2&amp;quot;&lt;/span&gt;
+kubectl get pods -A -o&lt;span class="o"&gt;=&lt;/span&gt;custom-columns&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;DATA:spec.containers[?(@.image!=&amp;quot;k8s.gcr.io/coredns:1.6.2&amp;quot;)].image&amp;#39;&lt;/span&gt;
+
+&lt;span class="c1"&gt;# All fields under metadata regardless of name&lt;/span&gt;
+kubectl get pods -A -o&lt;span class="o"&gt;=&lt;/span&gt;custom-columns&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;DATA:metadata.*&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;More examples in the kubectl &lt;a href="/docs/reference/kubectl/overview/#custom-columns"&gt;reference documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;h3&gt;Kubectl output verbosity and debugging&lt;/h3&gt;
+&lt;p&gt;Kubectl verbosity is controlled with the &lt;code&gt;-v&lt;/code&gt; or &lt;code&gt;--v&lt;/code&gt; flags followed by an integer representing the log level. General Kubernetes logging conventions and the associated log levels are described &lt;a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-instrumentation/logging.md"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Verbosity&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--v=0&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Generally useful for this to &lt;em&gt;always&lt;/em&gt; be visible to a cluster operator.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--v=1&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;A reasonable default log level if you don't want verbosity.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--v=2&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Useful steady state information about the service and important log messages that may correlate to significant changes in the system. This is the recommended default log level for most systems.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--v=3&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Extended information about changes.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--v=4&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Debug level verbosity.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--v=5&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Trace level verbosity.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--v=6&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Display requested resources.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--v=7&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Display HTTP request headers.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--v=8&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Display HTTP request contents.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;--v=9&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Display HTTP request contents without truncation of contents.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;See more community &lt;a href="https://github.com/dennyzhang/cheatsheet-kubernetes-A4"&gt;kubectl cheatsheets&lt;/a&gt;.&lt;/h3&gt;</content><category term="Technology"></category><category term="kubernetes"></category><category term="k8s"></category></entry><entry><title>Git Tips</title><link href="/git-tips.html" rel="alternate"></link><published>2021-11-04T00:00:00-07:00</published><updated>2021-11-04T00:00:00-07:00</updated><author><name>Bill Yang</name></author><id>tag:None,2021-11-04:/git-tips.html</id><summary type="html">&lt;p&gt;Tips for Git&lt;/p&gt;</summary><content type="html">&lt;h1&gt;how to do hot-fixes with github pull request&lt;/h1&gt;
+&lt;p&gt;Approach 1:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Create a PR from &lt;code&gt;hotfix&lt;/code&gt; to &lt;code&gt;master&lt;/code&gt; and have it reviewed&lt;/li&gt;
+&lt;li&gt;Once the PR is merged, create another PR from &lt;code&gt;hotfix&lt;/code&gt; to &lt;code&gt;develop&lt;/code&gt; and resolve conflict if has any.&lt;/li&gt;
+&lt;li&gt;Merge the PR to &lt;code&gt;develop&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;</content><category term="Technology"></category><category term="git"></category><category term="github"></category><category term="tips"></category></entry><entry><title>Linux Tips</title><link href="/linux-tips.html" rel="alternate"></link><published>2021-11-04T00:00:00-07:00</published><updated>2021-11-04T00:00:00-07:00</updated><author><name>Bill Yang</name></author><id>tag:None,2021-11-04:/linux-tips.html</id><summary type="html">&lt;p&gt;Tips for linux&lt;/p&gt;</summary><content type="html">&lt;h1&gt;how to completely remove flux from linux&lt;/h1&gt;
+&lt;p&gt;When I upgraded my computer to mx linux 21, fluxbox windows manager does not work properly.
+I run commands to completely uninstall the &lt;code&gt;fluxbox&lt;/code&gt; and related packages.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# remove packages&lt;/span&gt;
+&lt;span class="n"&gt;sudo&lt;/span&gt; &lt;span class="n"&gt;apt&lt;/span&gt; &lt;span class="n"&gt;purge&lt;/span&gt; &lt;span class="n"&gt;mx&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;fluxbox&lt;/span&gt; &lt;span class="n"&gt;mx&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;idesktool&lt;/span&gt; &lt;span class="n"&gt;mx&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;dockmaker&lt;/span&gt; &lt;span class="n"&gt;mxfb&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;art&lt;/span&gt; &lt;span class="n"&gt;mxfb&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;docs&lt;/span&gt; &lt;span class="n"&gt;mx&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;fluxbox&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;about&lt;/span&gt; &lt;span class="n"&gt;mx&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;fluxbox&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt; &lt;span class="n"&gt;faba&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;icon&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;theme&lt;/span&gt; &lt;span class="n"&gt;moka&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;icon&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;theme&lt;/span&gt; &lt;span class="n"&gt;wmalauncher&lt;/span&gt; &lt;span class="n"&gt;lxappearance&lt;/span&gt; &lt;span class="n"&gt;tint2&lt;/span&gt; &lt;span class="n"&gt;rofi&lt;/span&gt; &lt;span class="n"&gt;rofi&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;calc&lt;/span&gt; &lt;span class="n"&gt;gkrellm&lt;/span&gt; &lt;span class="n"&gt;fluxbox&lt;/span&gt; &lt;span class="n"&gt;idesk&lt;/span&gt; 
+&lt;span class="c1"&gt;#Remove config dirs and files&lt;/span&gt;
+&lt;span class="n"&gt;sudo&lt;/span&gt; &lt;span class="n"&gt;rm&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;  &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;etc&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;skel&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="o"&gt;$&lt;/span&gt;&lt;span class="n"&gt;HOME&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fluxbox&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;gkrellm2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;idesktop&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;tint2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;rofi&lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;
+&lt;span class="n"&gt;rm&lt;/span&gt; &lt;span class="o"&gt;$&lt;/span&gt;&lt;span class="n"&gt;HOME&lt;/span&gt;&lt;span class="o"&gt;/.&lt;/span&gt;&lt;span class="n"&gt;idesksrc&lt;/span&gt;
+&lt;span class="c1"&gt;#Remove leftover packages&lt;/span&gt;
+&lt;span class="n"&gt;sudo&lt;/span&gt; &lt;span class="n"&gt;apt&lt;/span&gt; &lt;span class="n"&gt;autoremove&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content><category term="Technology"></category><category term="linux"></category><category term="debian"></category><category term="tips"></category></entry><entry><title>Git repository sparse checkout</title><link href="/git-sparse-checkout.html" rel="alternate"></link><published>2021-09-24T00:00:00-07:00</published><updated>2021-09-24T00:00:00-07:00</updated><author><name>Bill Yang</name></author><id>tag:None,2021-09-24:/git-sparse-checkout.html</id><summary type="html">&lt;p&gt;Check out part of a repository&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Use sparse checkout to check out part of a repository&lt;/h1&gt;
+&lt;h2&gt;Scenario 1:&lt;/h2&gt;
+&lt;p&gt;We have main repository &lt;code&gt;myrepo&lt;/code&gt;.  It has &lt;code&gt;folder1&lt;/code&gt; and &lt;code&gt;folder2&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Those folders are maintained in their own repositories.&lt;/p&gt;
+&lt;p&gt;Therefore, we don't want to check out with the main repository.&lt;/p&gt;
+&lt;p&gt;Solution:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nv"&gt;mkdir&lt;/span&gt; &lt;span class="nv"&gt;myrepo&lt;/span&gt;
+&lt;span class="nv"&gt;cd&lt;/span&gt; &lt;span class="nv"&gt;myrepo&lt;/span&gt;
+&lt;span class="nv"&gt;git&lt;/span&gt; &lt;span class="nv"&gt;init&lt;/span&gt;
+# &lt;span class="nv"&gt;with&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nv"&gt;f&lt;/span&gt; &lt;span class="nv"&gt;option&lt;/span&gt;, &lt;span class="nv"&gt;git&lt;/span&gt; &lt;span class="nv"&gt;fetch&lt;/span&gt; &lt;span class="nv"&gt;is&lt;/span&gt; &lt;span class="nv"&gt;run&lt;/span&gt; &lt;span class="nv"&gt;immediately&lt;/span&gt; &lt;span class="nv"&gt;after&lt;/span&gt; &lt;span class="nv"&gt;the&lt;/span&gt; &lt;span class="nv"&gt;remote&lt;/span&gt; &lt;span class="nv"&gt;information&lt;/span&gt; &lt;span class="nv"&gt;is&lt;/span&gt; &lt;span class="nv"&gt;set&lt;/span&gt; &lt;span class="nv"&gt;up&lt;/span&gt;.
+&lt;span class="nv"&gt;git&lt;/span&gt; &lt;span class="nv"&gt;remote&lt;/span&gt; &lt;span class="nv"&gt;add&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nv"&gt;f&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nv"&gt;origin&lt;/span&gt; &lt;span class="nv"&gt;ssh&lt;/span&gt;:&lt;span class="o"&gt;//&amp;lt;&lt;/span&gt;&lt;span class="nv"&gt;user&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;@&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nv"&gt;url_of_sub_repo1&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="nv"&gt;git&lt;/span&gt; &lt;span class="nv"&gt;config&lt;/span&gt; &lt;span class="nv"&gt;core&lt;/span&gt;.&lt;span class="nv"&gt;sparse&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nv"&gt;checkout&lt;/span&gt; &lt;span class="nv"&gt;true&lt;/span&gt;
+# &lt;span class="nv"&gt;with&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;*&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;, &lt;span class="k"&gt;include&lt;/span&gt; &lt;span class="nv"&gt;all&lt;/span&gt; &lt;span class="nv"&gt;of&lt;/span&gt; &lt;span class="nv"&gt;the&lt;/span&gt; &lt;span class="nv"&gt;repository&lt;/span&gt;
+&lt;span class="nv"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;/*&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt; .&lt;span class="nv"&gt;git&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;info&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;sparse&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nv"&gt;checkout&lt;/span&gt;
+# &lt;span class="nv"&gt;with&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;!&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;, &lt;span class="nv"&gt;exclude&lt;/span&gt; &lt;span class="nv"&gt;those&lt;/span&gt; &lt;span class="nv"&gt;content&lt;/span&gt;
+&lt;span class="nv"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;!folder1/*&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt; .&lt;span class="nv"&gt;git&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;info&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;sparse&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nv"&gt;checkout&lt;/span&gt;
+&lt;span class="nv"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="s"&gt;!folder2/*&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt; .&lt;span class="nv"&gt;git&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;info&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;sparse&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nv"&gt;checkout&lt;/span&gt;
+&lt;span class="nv"&gt;git&lt;/span&gt; &lt;span class="nv"&gt;pull&lt;/span&gt; &lt;span class="nv"&gt;origin&lt;/span&gt; &lt;span class="nv"&gt;master&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Scenario 2:&lt;/h2&gt;
+&lt;p&gt;The main repository has many folders, we only want checkout &lt;code&gt;folder1&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Solution:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;mkdir myrepo
+cd myrepo
+git init
+git remote add -f -origin ssh://&amp;lt;user&amp;gt;@&amp;lt;url_of_sub_repo1&amp;gt;
+git config core.sparse-checkout true
+echo &amp;quot;folder1/**&amp;quot; &amp;gt;&amp;gt; .git/info/sparse-checkout
+git pull origin master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content><category term="Technology"></category><category term="git"></category><category term="github"></category></entry><entry><title>Git Actions Tips</title><link href="/github-action-tips.html" rel="alternate"></link><published>2021-09-16T00:00:00-07:00</published><updated>2021-09-16T00:00:00-07:00</updated><author><name>Bill Yang</name></author><id>tag:None,2021-09-16:/github-action-tips.html</id><summary type="html">&lt;p&gt;Tips for Github Actions&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Github Actions Tips&lt;/h1&gt;
+&lt;h2&gt;Run a script file in action&lt;/h2&gt;
+&lt;p&gt;To be more explicit, we use an example shell &lt;code&gt;./.github/script.sh&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The absolute path should be /home/runner/work/{repo-name}/{repo-name}/.github/script.sh, so follow code in action should also work:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;steps:
+- name: Run script file
+run: |
+    # make file runnable, might not be necessary
+    chmod +x &amp;quot;&lt;span class="cp"&gt;${&lt;/span&gt;&lt;span class="n"&gt;GITHUB_WORKSPACE&lt;/span&gt;&lt;span class="cp"&gt;}&lt;/span&gt;/.github/script.sh&amp;quot;
+
+    # run script
+    &amp;quot;&lt;span class="cp"&gt;${&lt;/span&gt;&lt;span class="n"&gt;GITHUB_WORKSPACE&lt;/span&gt;&lt;span class="cp"&gt;}&lt;/span&gt;/.github/script.sh&amp;quot;
+shell: bash # optional
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Github Action Example: Running remote SSH command&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;remote&lt;/span&gt; &lt;span class="n"&gt;ssh&lt;/span&gt; &lt;span class="n"&gt;command&lt;/span&gt;
+&lt;span class="n"&gt;on&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;push&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;branches&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;master&lt;/span&gt;
+&lt;span class="n"&gt;jobs&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;ssh&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;command&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;SSH&lt;/span&gt; &lt;span class="n"&gt;and&lt;/span&gt; &lt;span class="n"&gt;run&lt;/span&gt;
+    &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;on&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ubuntu&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;latest&lt;/span&gt;
+    &lt;span class="n"&gt;steps&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+      &lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="n"&gt;ssh&lt;/span&gt; &lt;span class="n"&gt;username&lt;/span&gt;&lt;span class="err"&gt;@&lt;/span&gt;&lt;span class="n"&gt;host&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;executing&lt;/span&gt; &lt;span class="n"&gt;remote&lt;/span&gt; &lt;span class="n"&gt;ssh&lt;/span&gt; &lt;span class="n"&gt;commands&lt;/span&gt; &lt;span class="n"&gt;using&lt;/span&gt; &lt;span class="n"&gt;password&lt;/span&gt;
+        &lt;span class="n"&gt;uses&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;appleboy&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;ssh&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;action&lt;/span&gt;&lt;span class="err"&gt;@&lt;/span&gt;&lt;span class="n"&gt;master&lt;/span&gt;
+        &lt;span class="k"&gt;with&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+          &lt;span class="n"&gt;host&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{{&lt;/span&gt; &lt;span class="n"&gt;secrets&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;HOST&lt;/span&gt; &lt;span class="o"&gt;}}&lt;/span&gt;
+          &lt;span class="n"&gt;username&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{{&lt;/span&gt; &lt;span class="n"&gt;secrets&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;USERNAME&lt;/span&gt; &lt;span class="o"&gt;}}&lt;/span&gt;
+          &lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{{&lt;/span&gt; &lt;span class="n"&gt;secrets&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;SSH_KEY&lt;/span&gt; &lt;span class="o"&gt;}}&lt;/span&gt; &lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="n"&gt;when&lt;/span&gt; &lt;span class="n"&gt;use&lt;/span&gt; &lt;span class="n"&gt;ssh&lt;/span&gt; &lt;span class="n"&gt;key&lt;/span&gt;
+          &lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="n"&gt;password&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{{&lt;/span&gt; &lt;span class="n"&gt;secrets&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;PASSWORD&lt;/span&gt; &lt;span class="o"&gt;}}&lt;/span&gt; &lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="n"&gt;when&lt;/span&gt; &lt;span class="n"&gt;use&lt;/span&gt; &lt;span class="n"&gt;password&lt;/span&gt;
+          &lt;span class="n"&gt;command_timeout&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt;
+          &lt;span class="n"&gt;script&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;
+            &lt;span class="n"&gt;cd&lt;/span&gt; &lt;span class="o"&gt;~/&lt;/span&gt;&lt;span class="n"&gt;test&lt;/span&gt;
+            &lt;span class="n"&gt;git&lt;/span&gt; &lt;span class="n"&gt;pull&lt;/span&gt; &lt;span class="n"&gt;origin&lt;/span&gt; &lt;span class="n"&gt;master&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Github Action Example: Build docker and push to docker hub&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Pelican&lt;/span&gt; &lt;span class="n"&gt;Docker&lt;/span&gt; &lt;span class="n"&gt;CI&lt;/span&gt;
+
+&lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="n"&gt;Triggers&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;workflow&lt;/span&gt; &lt;span class="n"&gt;on&lt;/span&gt; &lt;span class="n"&gt;manually&lt;/span&gt; &lt;span class="n"&gt;or&lt;/span&gt;
+&lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="n"&gt;push&lt;/span&gt; &lt;span class="n"&gt;events&lt;/span&gt; &lt;span class="n"&gt;but&lt;/span&gt; &lt;span class="n"&gt;only&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;master&lt;/span&gt; &lt;span class="n"&gt;branch&lt;/span&gt;
+&lt;span class="n"&gt;on&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;workflow_dispatch&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;push&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;branches&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;master&lt;/span&gt;
+
+&lt;span class="n"&gt;jobs&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+  &lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="n"&gt;This&lt;/span&gt; &lt;span class="n"&gt;workflow&lt;/span&gt; &lt;span class="n"&gt;contains&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;single&lt;/span&gt; &lt;span class="n"&gt;job&lt;/span&gt; &lt;span class="n"&gt;called&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;build&amp;quot;&lt;/span&gt;
+  &lt;span class="n"&gt;build&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;on&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ubuntu&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;latest&lt;/span&gt;
+    &lt;span class="n"&gt;steps&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;uses&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;actions&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;checkout&lt;/span&gt;&lt;span class="err"&gt;@&lt;/span&gt;&lt;span class="n"&gt;v2&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Push&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="n"&gt;docker&lt;/span&gt; &lt;span class="n"&gt;hub&lt;/span&gt;
+        &lt;span class="n"&gt;env&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+          &lt;span class="n"&gt;DOCKER_USERNAME&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{{&lt;/span&gt; &lt;span class="n"&gt;secrets&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;DOCKER_USERNAME&lt;/span&gt; &lt;span class="o"&gt;}}&lt;/span&gt;
+          &lt;span class="n"&gt;DOCKER_PASSWORD&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{{&lt;/span&gt; &lt;span class="n"&gt;secrets&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;DOCKER_PASSWORD&lt;/span&gt; &lt;span class="o"&gt;}}&lt;/span&gt;
+          &lt;span class="n"&gt;IMAGE_NAME&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;pelican&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;docker&lt;/span&gt;
+          &lt;span class="n"&gt;VERSION&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;latest&lt;/span&gt;
+        &lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;
+          &lt;span class="n"&gt;docker&lt;/span&gt; &lt;span class="n"&gt;login&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;DOCKER_USERNAME&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;DOCKER_PASSWORD&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="n"&gt;docker&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;io&lt;/span&gt;
+          &lt;span class="n"&gt;docker&lt;/span&gt; &lt;span class="n"&gt;build&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;IMAGE_NAME&lt;/span&gt;&lt;span class="o"&gt;}:&lt;/span&gt;&lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;VERSION&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt;
+          &lt;span class="n"&gt;docker&lt;/span&gt; &lt;span class="n"&gt;tag&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;IMAGE_NAME&lt;/span&gt;&lt;span class="o"&gt;}:&lt;/span&gt;&lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;VERSION&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt; &lt;span class="n"&gt;docker&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;io&lt;/span&gt;&lt;span class="sr"&gt;/${DOCKER_USERNAME}/&lt;/span&gt;&lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;IMAGE_NAME&lt;/span&gt;&lt;span class="o"&gt;}:&lt;/span&gt;&lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;VERSION&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+          &lt;span class="n"&gt;docker&lt;/span&gt; &lt;span class="n"&gt;push&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;DOCKER_USERNAME&lt;/span&gt;&lt;span class="o"&gt;}/&lt;/span&gt;&lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;IMAGE_NAME&lt;/span&gt;&lt;span class="o"&gt;}:&lt;/span&gt;&lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{&lt;/span&gt;&lt;span class="n"&gt;VERSION&lt;/span&gt;&lt;span class="o"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Github Action Example: Use SSH to deploy a repo to remote server&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;publish&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="n"&gt;remote&lt;/span&gt; &lt;span class="n"&gt;server&lt;/span&gt;
+
+&lt;span class="n"&gt;on&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;push&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;branches&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;master&lt;/span&gt;
+    &lt;span class="n"&gt;paths&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;ignore&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;todo/**&amp;#39;&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;.gitignore&amp;#39;&lt;/span&gt;
+
+&lt;span class="n"&gt;jobs&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;build&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;and&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;deploy&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; 
+    &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;on&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ubuntu&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;latest&lt;/span&gt;
+    &lt;span class="n"&gt;steps&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;uses&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;actions&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;checkout&lt;/span&gt;&lt;span class="err"&gt;@&lt;/span&gt;&lt;span class="n"&gt;v2&lt;/span&gt; 
+    &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Build&lt;/span&gt; 
+      &lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="n"&gt;build&lt;/span&gt; &lt;span class="n"&gt;command&lt;/span&gt; &lt;span class="n"&gt;here&lt;/span&gt;
+      &lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;make&lt;/span&gt; &lt;span class="n"&gt;build&lt;/span&gt; 
+
+    &lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="n"&gt;third&lt;/span&gt; &lt;span class="n"&gt;party&lt;/span&gt; &lt;span class="n"&gt;action&lt;/span&gt;&lt;span class="err"&gt;，&lt;/span&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;ssh&lt;/span&gt; &lt;span class="kd"&gt;private&lt;/span&gt; &lt;span class="n"&gt;key&lt;/span&gt; 
+    &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;uses&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;webfactory&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;ssh&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;agent&lt;/span&gt;&lt;span class="err"&gt;@&lt;/span&gt;&lt;span class="n"&gt;v0&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="mf"&gt;5.3&lt;/span&gt;
+      &lt;span class="k"&gt;with&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+        &lt;span class="n"&gt;ssh&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="kd"&gt;private&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;
+          &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{{&lt;/span&gt; &lt;span class="n"&gt;secrets&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;BLOG_DEPLOY_KEY&lt;/span&gt; &lt;span class="o"&gt;}}&lt;/span&gt;
+
+    &lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="n"&gt;use&lt;/span&gt; &lt;span class="n"&gt;ssh&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;keyscan&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="n"&gt;add&lt;/span&gt; &lt;span class="n"&gt;host&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="o"&gt;~/.&lt;/span&gt;&lt;span class="n"&gt;ssh&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;known_hosts&lt;/span&gt;
+    &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Scan&lt;/span&gt; &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="n"&gt;keys&lt;/span&gt;
+      &lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;
+        &lt;span class="n"&gt;ssh&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;keyscan&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{{&lt;/span&gt; &lt;span class="n"&gt;secrets&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;BLOG_DEPLOY_HOST&lt;/span&gt; &lt;span class="o"&gt;}}&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;~/.&lt;/span&gt;&lt;span class="n"&gt;ssh&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;known_hosts&lt;/span&gt;            
+
+    &lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="n"&gt;use&lt;/span&gt; &lt;span class="n"&gt;rsync&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="n"&gt;sync&lt;/span&gt; &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="n"&gt;folder&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="n"&gt;remote&lt;/span&gt; &lt;span class="n"&gt;server&lt;/span&gt;
+    &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Deploy&lt;/span&gt;
+      &lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;
+        &lt;span class="n"&gt;rsync&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;av&lt;/span&gt; &lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;delete&lt;/span&gt; &lt;span class="kd"&gt;public&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{{&lt;/span&gt; &lt;span class="n"&gt;secrets&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;USERNAME&lt;/span&gt; &lt;span class="o"&gt;}}&lt;/span&gt;&lt;span class="err"&gt;@&lt;/span&gt;&lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{{&lt;/span&gt; &lt;span class="n"&gt;secrets&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;BLOG_DEPLOY_HOST&lt;/span&gt; &lt;span class="o"&gt;}}:/&lt;/span&gt;&lt;span class="n"&gt;var&lt;/span&gt;&lt;span class="sr"&gt;/www/html/&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Github Action Example: Trigger on pull request merge&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nl"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;PR&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="k"&gt;on&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="nl"&gt;pull_request&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nl"&gt;types&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;closed&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="nl"&gt;jobs&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="nl"&gt;merged&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;on&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ubuntu&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;latest&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;github&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pull_request&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;merged&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;true&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nl"&gt;steps&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nl"&gt;run&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;      &lt;/span&gt;&lt;span class="n"&gt;echo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;PR #${{ github.event.number }} has been merged&amp;quot;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;  &lt;/span&gt;&lt;span class="ow"&gt;not&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="nl"&gt;merged&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="k"&gt;on&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ubuntu&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;latest&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;github&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;event&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pull_request&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;merged&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;false&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nl"&gt;steps&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nl"&gt;run&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;echo&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="ss"&gt;&amp;quot;PR #${{ github.event.number }} has been closed without being merged!&amp;quot;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Github Action Example: Convert SSH Key to a file&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Blog&lt;/span&gt; &lt;span class="n"&gt;Deploy&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;Docker&lt;/span&gt;
+&lt;span class="n"&gt;on&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;workflow_dispatch&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;push&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;branches&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;master&lt;/span&gt;
+    &lt;span class="n"&gt;paths&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;ignore&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;README&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;md&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;LICENSE&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;gitignore&lt;/span&gt;
+
+&lt;span class="n"&gt;jobs&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+  &lt;span class="n"&gt;deploy&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;on&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ubuntu&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;latest&lt;/span&gt;
+
+    &lt;span class="n"&gt;steps&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Checkout&lt;/span&gt;
+        &lt;span class="n"&gt;uses&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;actions&lt;/span&gt;&lt;span class="sr"&gt;/checkout@v2 # https://github.com/actions/&lt;/span&gt;&lt;span class="n"&gt;checkout&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Build&lt;/span&gt; &lt;span class="n"&gt;deploy&lt;/span&gt; &lt;span class="n"&gt;docker&lt;/span&gt; &lt;span class="n"&gt;image&lt;/span&gt;
+        &lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;
+          &lt;span class="n"&gt;docker&lt;/span&gt; &lt;span class="n"&gt;build&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="n"&gt;pelican&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Setup&lt;/span&gt; &lt;span class="n"&gt;deploy&lt;/span&gt; &lt;span class="n"&gt;env&lt;/span&gt;
+        &lt;span class="n"&gt;env&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+          &lt;span class="n"&gt;GITHUB_DEPLOY_KEY&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;{{&lt;/span&gt; &lt;span class="n"&gt;secrets&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="na"&gt;BLOG_SSH_PRIVATE&lt;/span&gt; &lt;span class="o"&gt;}}&lt;/span&gt;
+        &lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;
+          &lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="kd"&gt;set&lt;/span&gt; &lt;span class="n"&gt;up&lt;/span&gt; &lt;span class="kd"&gt;private&lt;/span&gt; &lt;span class="n"&gt;key&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;deploy&lt;/span&gt;
+          &lt;span class="n"&gt;mkdir&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;~/.&lt;/span&gt;&lt;span class="n"&gt;ssh&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;
+          &lt;span class="n"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;$GITHUB_DEPLOY_KEY&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;tr&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;d&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;\r&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;~/.&lt;/span&gt;&lt;span class="n"&gt;ssh&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;blog&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;ssh&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;key&lt;/span&gt;
+      &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Build&lt;/span&gt; &lt;span class="n"&gt;and&lt;/span&gt; &lt;span class="n"&gt;deploy&lt;/span&gt; &lt;span class="n"&gt;Github&lt;/span&gt; &lt;span class="n"&gt;Page&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;docker&lt;/span&gt;
+        &lt;span class="n"&gt;env&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
+          &lt;span class="n"&gt;DEPLOY_USER&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;Bill Yang&amp;#39;&lt;/span&gt; &lt;span class="err"&gt;#&lt;/span&gt; &lt;span class="n"&gt;export&lt;/span&gt; &lt;span class="n"&gt;DEPLOY_USER&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Bill Yang&amp;#39;&lt;/span&gt;
+          &lt;span class="n"&gt;DEPLOY_EMAIL&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;bill.yang@live.ca&amp;#39;&lt;/span&gt;
+          &lt;span class="n"&gt;DEPLOY_REPO&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;git@github.com:bill-yang/bill-yang.github.io.git&amp;#39;&lt;/span&gt;
+        &lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;
+          &lt;span class="n"&gt;docker&lt;/span&gt; &lt;span class="n"&gt;build&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="n"&gt;pelican&lt;/span&gt; &lt;span class="o"&gt;.&lt;/span&gt;
+          &lt;span class="n"&gt;docker&lt;/span&gt; &lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;rm&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;v&lt;/span&gt; &lt;span class="n"&gt;$&lt;/span&gt;&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="n"&gt;pwd&lt;/span&gt;&lt;span class="o"&gt;)/&lt;/span&gt;&lt;span class="n"&gt;content&lt;/span&gt;&lt;span class="o"&gt;:/&lt;/span&gt;&lt;span class="n"&gt;website&lt;/span&gt;&lt;span class="sr"&gt;/content:ro -v ~/.ssh/blog-ssh-key:/tmp/i&lt;/span&gt;&lt;span class="n"&gt;d_rsa&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt; &lt;span class="n"&gt;DEPLOY_USER&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt; &lt;span class="n"&gt;DEPLOY_EMAIL&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;e&lt;/span&gt; &lt;span class="n"&gt;DEPLOY_REPO&lt;/span&gt; &lt;span class="n"&gt;pelican&lt;/span&gt; &lt;span class="n"&gt;make&lt;/span&gt; &lt;span class="n"&gt;deploy&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content><category term="Technology"></category><category term="git"></category><category term="github"></category><category term="CI/CD"></category><category term="github actions"></category></entry><entry><title>How to share data between linux host and virtualbox ubuntu guest OS</title><link href="/share-folder-for-linux-virtualbox.html" rel="alternate"></link><published>2021-09-16T00:00:00-07:00</published><updated>2021-09-16T00:00:00-07:00</updated><author><name>Bill Yang</name></author><id>tag:None,2021-09-16:/share-folder-for-linux-virtualbox.html</id><summary type="html">&lt;p&gt;How to share data between linux host and virtualbox ubuntu guest OS?&lt;/p&gt;</summary><content type="html">&lt;h1&gt;How to share data between linux host and ubuntu in VirtualBox&lt;/h1&gt;
+&lt;p&gt;I installed a ubuntu server 2004 lt in mx linux (based on Debian Buster). Howerver the server guest has no UI installed.
+This guide will walk you through to set up a share folder between guest and host.&lt;/p&gt;
+&lt;h2&gt;get package installed&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;sudo apt update
+sudo apt install build-essential dkms linux-headers-$(uname -r)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We also need install virtualbox additions in guest OS.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;from Virtualbox menu Devices -&amp;gt; 'Insert Guest Additions CD image...'&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;in guest OS,&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;sudo mkdir -p /mnt/cdrom
+sudo mount /dev/cdrom /mnt/cdrom    
+cd /mnt/cdrom
+sudo sh ./VBoxLinuxAdditions.run --nox11
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;After install, verify the installation by:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;lsmod | grep vbox
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;In the output there should a &lt;code&gt;vboxsf&lt;/code&gt; and &lt;code&gt;vboxguest&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;We alseed install a package for ubuntu&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;sudo apt install virtualbox-guest-utils
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Add user to vboxsf group&lt;/h2&gt;
+&lt;p&gt;we need add current user to vboxsf group&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;sudo&lt;/span&gt; &lt;span class="n"&gt;usermod&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;G&lt;/span&gt; &lt;span class="n"&gt;vboxsf&lt;/span&gt; &lt;span class="n n-Quoted"&gt;`whoami`&lt;/span&gt;
+
+&lt;span class="n"&gt;sudo&lt;/span&gt; &lt;span class="n"&gt;mkdir&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;P&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;media&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n n-Quoted"&gt;`whoami`&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="k"&gt;share&lt;/span&gt;
+&lt;span class="n"&gt;sudo&lt;/span&gt; &lt;span class="n"&gt;chown&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;R&lt;/span&gt; &lt;span class="n n-Quoted"&gt;`whoami`&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;&lt;span class="n"&gt;users&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;media&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n n-Quoted"&gt;`whoami`&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="k"&gt;share&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;set up on Host&lt;/h2&gt;
+&lt;p&gt;Now we can set up share folder in host machine with the name &lt;code&gt;share&lt;/code&gt;&lt;/p&gt;
+&lt;h2&gt;mount in guest OS&lt;/h2&gt;
+&lt;p&gt;Reboot the guest linux, open a terminal to mount the shared folder&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;sudo&lt;/span&gt; &lt;span class="n"&gt;mount&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="n"&gt;vboxsf&lt;/span&gt; &lt;span class="n"&gt;sshare&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;media&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n n-Quoted"&gt;`whoami`&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;sahre&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content><category term="Technology"></category><category term="linux"></category><category term="ubuntu"></category><category term="virtualbox"></category></entry></feed>

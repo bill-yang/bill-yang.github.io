@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>My Website - issue</title><link href="/" rel="alternate"></link><link href="/feeds/issue.atom.xml" rel="self"></link><id>/</id><updated>2021-11-04T00:00:00-07:00</updated><entry><title>Vagrant up issue when upgrade to macOS Monterey</title><link href="/vagrant-up-issue-on-macos-monterey.html" rel="alternate"></link><published>2021-11-04T00:00:00-07:00</published><updated>2021-11-04T00:00:00-07:00</updated><author><name>Bill Yang</name></author><id>tag:None,2021-11-04:/vagrant-up-issue-on-macos-monterey.html</id><summary type="html">&lt;p&gt;Vagrant start up virtualbox issue on macOS Monterey&lt;/p&gt;</summary><content type="html">&lt;h1&gt;vagrant/virtualbox issue when upgrade to MacOS Monterey&lt;/h1&gt;
+&lt;p&gt;After upgraded my MacBook Pro to macOS Monterey, my vagrant was not to start up.&lt;/p&gt;
+&lt;h2&gt;Environment:&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;macOS Monterey&lt;/li&gt;
+&lt;li&gt;Virtualbox 6.1.28&lt;/li&gt;
+&lt;li&gt;vagrant 2.2.18&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Issues&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;issue 1: vagrant is terminated unexpectedly when configured with headless&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;issue 2: vagrant is failed to create host-only adapter&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Issue report links&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;https://www.virtualbox.org/ticket/20636
+https://www.virtualbox.org/ticket/20626
+https://www.virtualbox.org/manual/ch06.html#network_hostonly
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Workaround&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Add &lt;code&gt;gui = true&lt;/code&gt; in &lt;code&gt;Vagrantfile&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="nv"&gt;config&lt;/span&gt;.&lt;span class="nv"&gt;vm&lt;/span&gt;.&lt;span class="nv"&gt;provider&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="s"&gt;virtualbox&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="nv"&gt;vb&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;
+    &lt;span class="nv"&gt;vb&lt;/span&gt;.&lt;span class="nv"&gt;gui&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nv"&gt;true&lt;/span&gt;  # &lt;span class="nv"&gt;Add&lt;/span&gt; &lt;span class="nv"&gt;this&lt;/span&gt; &lt;span class="nv"&gt;line&lt;/span&gt;
+    ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create /etc/vbox/networks.conf on the host machine with following content&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;* 10.0.0.0/8 192.168.10.0/24
+* 2001::/64
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Run following commands after every reboot:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;sudo&lt;/span&gt; &lt;span class="n"&gt;kextload&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;org&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;virtualbox&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;kext&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;VBoxDrv&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;sudo&lt;/span&gt; &lt;span class="n"&gt;kextload&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;org&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;virtualbox&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;kext&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;VBoxNetFlt&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;sudo&lt;/span&gt; &lt;span class="n"&gt;kextload&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;org&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;virtualbox&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;kext&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;VBoxNetAdp&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;sudo&lt;/span&gt; &lt;span class="n"&gt;kextload&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="n"&gt;org&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;virtualbox&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;kext&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;VBoxUSB&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Alternative Workaround&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;download virtualbox test build&lt;/li&gt;
+&lt;li&gt;install with disable &lt;code&gt;System Integrity Protection&lt;/code&gt; on macOS Monterey&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;check system integrity protection by:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;csrutil status
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;To enable or disable &lt;code&gt;System Integrity Protection&lt;/code&gt;, you must boot to Recovery OS and run the &lt;code&gt;csrutil&lt;/code&gt; command from the Terminal.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Boot to Recovery OS by restarting your machine and holding down the Command and R keys at startup.&lt;/li&gt;
+&lt;li&gt;Launch Terminal from the Utilities menu.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Enter the following command:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;csrutil enable
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;reboot the system after &lt;code&gt;System Integrity Protection&lt;/code&gt; is enabled or disabled.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Related links:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://developer.apple.com/library/archive/documentation/Security/Conceptual/System_Integrity_Protection_Guide/ConfiguringSystemIntegrityProtection/ConfiguringSystemIntegrityProtection.html"&gt;Configuring System Integrity Protection&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://www.virtualbox.org/wiki/Testbuilds"&gt;Virtualbox Test Builds&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</content><category term="issue"></category><category term="issue"></category><category term="vagrant"></category><category term="virtualbox"></category><category term="macos"></category></entry></feed>

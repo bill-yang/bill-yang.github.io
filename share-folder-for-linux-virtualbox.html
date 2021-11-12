@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>How to share data between linux host and virtualbox ubuntu guest OS - My Website</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="/share-folder-for-linux-virtualbox.html">
+
+        <meta name="author" content="Bill Yang" />
+        <meta name="keywords" content="linux,ubuntu,virtualbox" />
+        <meta name="description" content="How to share data between linux host and virtualbox ubuntu guest OS?" />
+
+        <meta property="og:site_name" content="My Website" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="How to share data between linux host and virtualbox ubuntu guest OS"/>
+        <meta property="og:url" content="/share-folder-for-linux-virtualbox.html"/>
+        <meta property="og:description" content="How to share data between linux host and virtualbox ubuntu guest OS?"/>
+        <meta property="article:published_time" content="2021-09-16" />
+            <meta property="article:section" content="Technology" />
+            <meta property="article:tag" content="linux" />
+            <meta property="article:tag" content="ubuntu" />
+            <meta property="article:tag" content="virtualbox" />
+            <meta property="article:author" content="Bill Yang" />
+
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/theme/css/pygments/native.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+
+        <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+              title="My Website ATOM Feed"/>
+
+        <link href="/feeds/technology.atom.xml" type="application/atom+xml" rel="alternate"
+              title="My Website Technology ATOM Feed"/>
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+My Website            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                        <li >
+                            <a href="/category/cheat-sheet.html">Cheat sheet</a>
+                        </li>
+                        <li >
+                            <a href="/category/issue.html">Issue</a>
+                        </li>
+                        <li >
+                            <a href="/category/task.html">Task</a>
+                        </li>
+                        <li class="active">
+                            <a href="/category/technology.html">Technology</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<!-- Banner -->
+<!-- End Banner -->
+
+<!-- Content Container -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="/share-folder-for-linux-virtualbox.html"
+                       rel="bookmark"
+                       title="Permalink to How to share data between linux host and virtualbox ubuntu guest OS">
+                        How to share data between linux host and virtualbox ubuntu guest OS
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2021-09-16T00:00:00-07:00"> Thu 16 September 2021</time>
+    </span>
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="/tag/linux.html">linux</a>
+        /
+	<a href="/tag/ubuntu.html">ubuntu</a>
+        /
+	<a href="/tag/virtualbox.html">virtualbox</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <h1>How to share data between linux host and ubuntu in VirtualBox</h1>
+<p>I installed a ubuntu server 2004 lt in mx linux (based on Debian Buster). Howerver the server guest has no UI installed.
+This guide will walk you through to set up a share folder between guest and host.</p>
+<h2>get package installed</h2>
+<div class="highlight"><pre><span></span><code>sudo apt update
+sudo apt install build-essential dkms linux-headers-$(uname -r)
+</code></pre></div>
+
+<p>We also need install virtualbox additions in guest OS.</p>
+<ol>
+<li>
+<p>from Virtualbox menu Devices -&gt; 'Insert Guest Additions CD image...'</p>
+</li>
+<li>
+<p>in guest OS,</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code>sudo mkdir -p /mnt/cdrom
+sudo mount /dev/cdrom /mnt/cdrom    
+cd /mnt/cdrom
+sudo sh ./VBoxLinuxAdditions.run --nox11
+</code></pre></div>
+
+<p>After install, verify the installation by:</p>
+<div class="highlight"><pre><span></span><code>lsmod | grep vbox
+</code></pre></div>
+
+<p>In the output there should a <code>vboxsf</code> and <code>vboxguest</code></p>
+<p>We alseed install a package for ubuntu</p>
+<div class="highlight"><pre><span></span><code>sudo apt install virtualbox-guest-utils
+</code></pre></div>
+
+<h2>Add user to vboxsf group</h2>
+<p>we need add current user to vboxsf group</p>
+<div class="highlight"><pre><span></span><code><span class="n">sudo</span> <span class="n">usermod</span> <span class="o">-</span><span class="n">a</span> <span class="o">-</span><span class="n">G</span> <span class="n">vboxsf</span> <span class="n n-Quoted">`whoami`</span>
+
+<span class="n">sudo</span> <span class="n">mkdir</span> <span class="o">-</span><span class="n">P</span> <span class="o">/</span><span class="n">media</span><span class="o">/</span><span class="n n-Quoted">`whoami`</span><span class="o">/</span><span class="k">share</span>
+<span class="n">sudo</span> <span class="n">chown</span> <span class="o">-</span><span class="n">R</span> <span class="n n-Quoted">`whoami`</span><span class="o">:</span><span class="n">users</span> <span class="o">/</span><span class="n">media</span><span class="o">/</span><span class="n n-Quoted">`whoami`</span><span class="o">/</span><span class="k">share</span>
+</code></pre></div>
+
+<h2>set up on Host</h2>
+<p>Now we can set up share folder in host machine with the name <code>share</code></p>
+<h2>mount in guest OS</h2>
+<p>Reboot the guest linux, open a terminal to mount the shared folder</p>
+<div class="highlight"><pre><span></span><code><span class="n">sudo</span> <span class="n">mount</span> <span class="o">-</span><span class="n">t</span> <span class="n">vboxsf</span> <span class="n">sshare</span> <span class="o">/</span><span class="n">media</span><span class="o">/</span><span class="n n-Quoted">`whoami`</span><span class="o">/</span><span class="n">sahre</span>
+</code></pre></div>
+            </div>
+            <!-- /.entry-content -->
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+<!-- Sidebar -->
+<section class="well well-sm">
+  <ul class="list-group list-group-flush">
+
+<!-- Sidebar/Social -->
+<li class="list-group-item">
+  <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+  <ul class="list-group" id="social">
+    <li class="list-group-item"><a href="#"><i class="fa fa-you-can-add-links-in-your-config-file-square fa-lg"></i> You can add links in your config file</a></li>
+    <li class="list-group-item"><a href="#"><i class="fa fa-another-social-link-square fa-lg"></i> Another social link</a></li>
+  </ul>
+</li>
+<!-- End Sidebar/Social -->
+
+<!-- Sidebar/Links -->
+<li class="list-group-item">
+  <h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
+  <ul class="list-group" id="links">
+    <li class="list-group-item">
+      <a href="https://getpelican.com/" target="_blank">Pelican</a>
+    </li>
+    <li class="list-group-item">
+      <a href="https://www.python.org/" target="_blank">Python.org</a>
+    </li>
+    <li class="list-group-item">
+      <a href="https://palletsprojects.com/p/jinja/" target="_blank">Jinja2</a>
+    </li>
+    <li class="list-group-item">
+      <a href="#" target="_blank">You can modify those links in your config file</a>
+    </li>
+  </ul>
+</li>
+<!-- End Sidebar/Links -->
+  </ul>
+</section>
+<!-- End Sidebar -->            </aside>
+        </div>
+    </div>
+</div>
+<!-- End Content Container -->
+
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2021 Bill Yang
+            &middot; Powered by <a href="https://github.com/getpelican/pelican-themes/tree/master/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="/theme/js/respond.min.js"></script>
+
+
+
+
+</body>
+</html>

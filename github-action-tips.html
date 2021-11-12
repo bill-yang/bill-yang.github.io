@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>Git Actions Tips - My Website</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="/github-action-tips.html">
+
+        <meta name="author" content="Bill Yang" />
+        <meta name="keywords" content="git,github,CI/CD,github actions" />
+        <meta name="description" content="Tips for Github Actions" />
+
+        <meta property="og:site_name" content="My Website" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Git Actions Tips"/>
+        <meta property="og:url" content="/github-action-tips.html"/>
+        <meta property="og:description" content="Tips for Github Actions"/>
+        <meta property="article:published_time" content="2021-09-16" />
+            <meta property="article:section" content="Technology" />
+            <meta property="article:tag" content="git" />
+            <meta property="article:tag" content="github" />
+            <meta property="article:tag" content="CI/CD" />
+            <meta property="article:tag" content="github actions" />
+            <meta property="article:author" content="Bill Yang" />
+
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/theme/css/pygments/native.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+
+        <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
+              title="My Website ATOM Feed"/>
+
+        <link href="/feeds/technology.atom.xml" type="application/atom+xml" rel="alternate"
+              title="My Website Technology ATOM Feed"/>
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+My Website            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                        <li >
+                            <a href="/category/cheat-sheet.html">Cheat sheet</a>
+                        </li>
+                        <li >
+                            <a href="/category/issue.html">Issue</a>
+                        </li>
+                        <li >
+                            <a href="/category/task.html">Task</a>
+                        </li>
+                        <li class="active">
+                            <a href="/category/technology.html">Technology</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<!-- Banner -->
+<!-- End Banner -->
+
+<!-- Content Container -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="/github-action-tips.html"
+                       rel="bookmark"
+                       title="Permalink to Git Actions Tips">
+                        Git Actions Tips
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2021-09-16T00:00:00-07:00"> Thu 16 September 2021</time>
+    </span>
+
+
+
+
+
+<span class="label label-default">Tags</span>
+	<a href="/tag/git.html">git</a>
+        /
+	<a href="/tag/github.html">github</a>
+        /
+	<a href="/tag/cicd.html">CI/CD</a>
+        /
+	<a href="/tag/github-actions.html">github actions</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <h1>Github Actions Tips</h1>
+<h2>Run a script file in action</h2>
+<p>To be more explicit, we use an example shell <code>./.github/script.sh</code></p>
+<p>The absolute path should be /home/runner/work/{repo-name}/{repo-name}/.github/script.sh, so follow code in action should also work:</p>
+<div class="highlight"><pre><span></span><code>steps:
+- name: Run script file
+run: |
+    # make file runnable, might not be necessary
+    chmod +x &quot;<span class="cp">${</span><span class="n">GITHUB_WORKSPACE</span><span class="cp">}</span>/.github/script.sh&quot;
+
+    # run script
+    &quot;<span class="cp">${</span><span class="n">GITHUB_WORKSPACE</span><span class="cp">}</span>/.github/script.sh&quot;
+shell: bash # optional
+</code></pre></div>
+
+<h2>Github Action Example: Running remote SSH command</h2>
+<div class="highlight"><pre><span></span><code><span class="n">name</span><span class="o">:</span> <span class="n">remote</span> <span class="n">ssh</span> <span class="n">command</span>
+<span class="n">on</span><span class="o">:</span>
+  <span class="n">push</span><span class="o">:</span>
+    <span class="n">branches</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">master</span>
+<span class="n">jobs</span><span class="o">:</span>
+  <span class="n">run</span><span class="o">-</span><span class="n">ssh</span><span class="o">-</span><span class="n">command</span><span class="o">:</span>
+    <span class="n">name</span><span class="o">:</span> <span class="n">SSH</span> <span class="n">and</span> <span class="n">run</span>
+    <span class="n">runs</span><span class="o">-</span><span class="n">on</span><span class="o">:</span> <span class="n">ubuntu</span><span class="o">-</span><span class="n">latest</span>
+    <span class="n">steps</span><span class="o">:</span>
+      <span class="err">#</span> <span class="n">ssh</span> <span class="n">username</span><span class="err">@</span><span class="n">host</span>
+      <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">executing</span> <span class="n">remote</span> <span class="n">ssh</span> <span class="n">commands</span> <span class="n">using</span> <span class="n">password</span>
+        <span class="n">uses</span><span class="o">:</span> <span class="n">appleboy</span><span class="o">/</span><span class="n">ssh</span><span class="o">-</span><span class="n">action</span><span class="err">@</span><span class="n">master</span>
+        <span class="k">with</span><span class="o">:</span>
+          <span class="n">host</span><span class="o">:</span> <span class="n">$</span><span class="o">{{</span> <span class="n">secrets</span><span class="o">.</span><span class="na">HOST</span> <span class="o">}}</span>
+          <span class="n">username</span><span class="o">:</span> <span class="n">$</span><span class="o">{{</span> <span class="n">secrets</span><span class="o">.</span><span class="na">USERNAME</span> <span class="o">}}</span>
+          <span class="n">key</span><span class="o">:</span> <span class="n">$</span><span class="o">{{</span> <span class="n">secrets</span><span class="o">.</span><span class="na">SSH_KEY</span> <span class="o">}}</span> <span class="err">#</span> <span class="n">when</span> <span class="n">use</span> <span class="n">ssh</span> <span class="n">key</span>
+          <span class="err">#</span> <span class="n">password</span><span class="o">:</span> <span class="n">$</span><span class="o">{{</span> <span class="n">secrets</span><span class="o">.</span><span class="na">PASSWORD</span> <span class="o">}}</span> <span class="err">#</span> <span class="n">when</span> <span class="n">use</span> <span class="n">password</span>
+          <span class="n">command_timeout</span><span class="o">:</span> <span class="mi">5</span><span class="n">m</span>
+          <span class="n">script</span><span class="o">:</span> <span class="o">|</span>
+            <span class="n">cd</span> <span class="o">~/</span><span class="n">test</span>
+            <span class="n">git</span> <span class="n">pull</span> <span class="n">origin</span> <span class="n">master</span>
+</code></pre></div>
+
+<h2>Github Action Example: Build docker and push to docker hub</h2>
+<div class="highlight"><pre><span></span><code><span class="n">name</span><span class="o">:</span> <span class="n">Pelican</span> <span class="n">Docker</span> <span class="n">CI</span>
+
+<span class="err">#</span> <span class="n">Triggers</span> <span class="n">the</span> <span class="n">workflow</span> <span class="n">on</span> <span class="n">manually</span> <span class="n">or</span>
+<span class="err">#</span> <span class="n">push</span> <span class="n">events</span> <span class="n">but</span> <span class="n">only</span> <span class="k">for</span> <span class="n">the</span> <span class="n">master</span> <span class="n">branch</span>
+<span class="n">on</span><span class="o">:</span>
+  <span class="n">workflow_dispatch</span><span class="o">:</span>
+  <span class="n">push</span><span class="o">:</span>
+    <span class="n">branches</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">master</span>
+
+<span class="n">jobs</span><span class="o">:</span>
+  <span class="err">#</span> <span class="n">This</span> <span class="n">workflow</span> <span class="n">contains</span> <span class="n">a</span> <span class="n">single</span> <span class="n">job</span> <span class="n">called</span> <span class="s2">&quot;build&quot;</span>
+  <span class="n">build</span><span class="o">:</span>
+    <span class="n">runs</span><span class="o">-</span><span class="n">on</span><span class="o">:</span> <span class="n">ubuntu</span><span class="o">-</span><span class="n">latest</span>
+    <span class="n">steps</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">uses</span><span class="o">:</span> <span class="n">actions</span><span class="o">/</span><span class="n">checkout</span><span class="err">@</span><span class="n">v2</span>
+      <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">Push</span> <span class="n">to</span> <span class="n">docker</span> <span class="n">hub</span>
+        <span class="n">env</span><span class="o">:</span>
+          <span class="n">DOCKER_USERNAME</span><span class="o">:</span> <span class="n">$</span><span class="o">{{</span> <span class="n">secrets</span><span class="o">.</span><span class="na">DOCKER_USERNAME</span> <span class="o">}}</span>
+          <span class="n">DOCKER_PASSWORD</span><span class="o">:</span> <span class="n">$</span><span class="o">{{</span> <span class="n">secrets</span><span class="o">.</span><span class="na">DOCKER_PASSWORD</span> <span class="o">}}</span>
+          <span class="n">IMAGE_NAME</span><span class="o">:</span> <span class="n">pelican</span><span class="o">-</span><span class="n">docker</span>
+          <span class="n">VERSION</span><span class="o">:</span> <span class="n">latest</span>
+        <span class="n">run</span><span class="o">:</span> <span class="o">|</span>
+          <span class="n">docker</span> <span class="n">login</span> <span class="o">-</span><span class="n">u</span> <span class="n">$</span><span class="o">{</span><span class="n">DOCKER_USERNAME</span><span class="o">}</span> <span class="o">-</span><span class="n">p</span> <span class="n">$</span><span class="o">{</span><span class="n">DOCKER_PASSWORD</span><span class="o">}</span> <span class="n">docker</span><span class="o">.</span><span class="na">io</span>
+          <span class="n">docker</span> <span class="n">build</span> <span class="o">-</span><span class="n">t</span> <span class="n">$</span><span class="o">{</span><span class="n">IMAGE_NAME</span><span class="o">}:</span><span class="n">$</span><span class="o">{</span><span class="n">VERSION</span><span class="o">}</span> <span class="o">.</span>
+          <span class="n">docker</span> <span class="n">tag</span> <span class="n">$</span><span class="o">{</span><span class="n">IMAGE_NAME</span><span class="o">}:</span><span class="n">$</span><span class="o">{</span><span class="n">VERSION</span><span class="o">}</span> <span class="n">docker</span><span class="o">.</span><span class="na">io</span><span class="sr">/${DOCKER_USERNAME}/</span><span class="n">$</span><span class="o">{</span><span class="n">IMAGE_NAME</span><span class="o">}:</span><span class="n">$</span><span class="o">{</span><span class="n">VERSION</span><span class="o">}</span>
+          <span class="n">docker</span> <span class="n">push</span> <span class="n">$</span><span class="o">{</span><span class="n">DOCKER_USERNAME</span><span class="o">}/</span><span class="n">$</span><span class="o">{</span><span class="n">IMAGE_NAME</span><span class="o">}:</span><span class="n">$</span><span class="o">{</span><span class="n">VERSION</span><span class="o">}</span>
+</code></pre></div>
+
+<h2>Github Action Example: Use SSH to deploy a repo to remote server</h2>
+<div class="highlight"><pre><span></span><code><span class="n">name</span><span class="o">:</span> <span class="n">publish</span> <span class="n">to</span> <span class="n">remote</span> <span class="n">server</span>
+
+<span class="n">on</span><span class="o">:</span>
+  <span class="n">push</span><span class="o">:</span>
+    <span class="n">branches</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">master</span>
+    <span class="n">paths</span><span class="o">-</span><span class="n">ignore</span><span class="o">:</span>
+      <span class="o">-</span> <span class="s1">&#39;todo/**&#39;</span>
+      <span class="o">-</span> <span class="s1">&#39;.gitignore&#39;</span>
+
+<span class="n">jobs</span><span class="o">:</span>
+  <span class="n">build</span><span class="o">-</span><span class="n">and</span><span class="o">-</span><span class="n">deploy</span><span class="o">:</span> 
+    <span class="n">runs</span><span class="o">-</span><span class="n">on</span><span class="o">:</span> <span class="n">ubuntu</span><span class="o">-</span><span class="n">latest</span>
+    <span class="n">steps</span><span class="o">:</span>
+    <span class="o">-</span> <span class="n">uses</span><span class="o">:</span> <span class="n">actions</span><span class="o">/</span><span class="n">checkout</span><span class="err">@</span><span class="n">v2</span> 
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">Build</span> 
+      <span class="err">#</span> <span class="n">run</span> <span class="n">build</span> <span class="n">command</span> <span class="n">here</span>
+      <span class="n">run</span><span class="o">:</span> <span class="n">make</span> <span class="n">build</span> 
+
+    <span class="err">#</span> <span class="n">third</span> <span class="n">party</span> <span class="n">action</span><span class="err">，</span><span class="k">for</span> <span class="n">ssh</span> <span class="kd">private</span> <span class="n">key</span> 
+    <span class="o">-</span> <span class="n">uses</span><span class="o">:</span> <span class="n">webfactory</span><span class="o">/</span><span class="n">ssh</span><span class="o">-</span><span class="n">agent</span><span class="err">@</span><span class="n">v0</span><span class="o">.</span><span class="mf">5.3</span>
+      <span class="k">with</span><span class="o">:</span>
+        <span class="n">ssh</span><span class="o">-</span><span class="kd">private</span><span class="o">-</span><span class="n">key</span><span class="o">:</span> <span class="o">|</span>
+          <span class="n">$</span><span class="o">{{</span> <span class="n">secrets</span><span class="o">.</span><span class="na">BLOG_DEPLOY_KEY</span> <span class="o">}}</span>
+
+    <span class="err">#</span> <span class="n">use</span> <span class="n">ssh</span><span class="o">-</span><span class="n">keyscan</span> <span class="n">to</span> <span class="n">add</span> <span class="n">host</span> <span class="n">to</span> <span class="o">~/.</span><span class="n">ssh</span><span class="o">/</span><span class="n">known_hosts</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">Scan</span> <span class="kd">public</span> <span class="n">keys</span>
+      <span class="n">run</span><span class="o">:</span> <span class="o">|</span>
+        <span class="n">ssh</span><span class="o">-</span><span class="n">keyscan</span> <span class="n">$</span><span class="o">{{</span> <span class="n">secrets</span><span class="o">.</span><span class="na">BLOG_DEPLOY_HOST</span> <span class="o">}}</span> <span class="o">&gt;&gt;</span> <span class="o">~/.</span><span class="n">ssh</span><span class="o">/</span><span class="n">known_hosts</span>            
+
+    <span class="err">#</span> <span class="n">use</span> <span class="n">rsync</span> <span class="n">to</span> <span class="n">sync</span> <span class="kd">public</span> <span class="n">folder</span> <span class="n">to</span> <span class="n">remote</span> <span class="n">server</span>
+    <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">Deploy</span>
+      <span class="n">run</span><span class="o">:</span> <span class="o">|</span>
+        <span class="n">rsync</span> <span class="o">-</span><span class="n">av</span> <span class="o">--</span><span class="n">delete</span> <span class="kd">public</span> <span class="n">$</span><span class="o">{{</span> <span class="n">secrets</span><span class="o">.</span><span class="na">USERNAME</span> <span class="o">}}</span><span class="err">@</span><span class="n">$</span><span class="o">{{</span> <span class="n">secrets</span><span class="o">.</span><span class="na">BLOG_DEPLOY_HOST</span> <span class="o">}}:/</span><span class="n">var</span><span class="sr">/www/html/</span>
+</code></pre></div>
+
+<h2>Github Action Example: Trigger on pull request merge</h2>
+<div class="highlight"><pre><span></span><code><span class="nl">name</span><span class="p">:</span><span class="w"> </span><span class="n">PR</span><span class="w"></span>
+
+<span class="k">on</span><span class="err">:</span><span class="w"></span>
+<span class="w">  </span><span class="nl">pull_request</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nl">types</span><span class="p">:</span><span class="w"> </span><span class="o">[</span><span class="n">closed</span><span class="o">]</span><span class="w"></span>
+
+<span class="nl">jobs</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nl">merged</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">runs</span><span class="o">-</span><span class="k">on</span><span class="err">:</span><span class="w"> </span><span class="n">ubuntu</span><span class="o">-</span><span class="n">latest</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="err">:</span><span class="w"> </span><span class="n">github</span><span class="p">.</span><span class="n">event</span><span class="p">.</span><span class="n">pull_request</span><span class="p">.</span><span class="n">merged</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">true</span><span class="w"></span>
+<span class="w">    </span><span class="nl">steps</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="o">-</span><span class="w"> </span><span class="nl">run</span><span class="p">:</span><span class="w"> </span><span class="o">|</span><span class="w"></span>
+<span class="w">      </span><span class="n">echo</span><span class="w"> </span><span class="ss">&quot;PR #${{ github.event.number }} has been merged&quot;</span><span class="w"></span>
+<span class="w">  </span><span class="ow">not</span><span class="o">-</span><span class="nl">merged</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">runs</span><span class="o">-</span><span class="k">on</span><span class="err">:</span><span class="w"> </span><span class="n">ubuntu</span><span class="o">-</span><span class="n">latest</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="err">:</span><span class="w"> </span><span class="n">github</span><span class="p">.</span><span class="n">event</span><span class="p">.</span><span class="n">pull_request</span><span class="p">.</span><span class="n">merged</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">false</span><span class="w"></span>
+<span class="w">    </span><span class="nl">steps</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="o">-</span><span class="w"> </span><span class="nl">run</span><span class="p">:</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="ss">&quot;PR #${{ github.event.number }} has been closed without being merged!&quot;</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Github Action Example: Convert SSH Key to a file</h2>
+<div class="highlight"><pre><span></span><code><span class="n">name</span><span class="o">:</span> <span class="n">Blog</span> <span class="n">Deploy</span> <span class="k">with</span> <span class="n">Docker</span>
+<span class="n">on</span><span class="o">:</span>
+  <span class="n">workflow_dispatch</span><span class="o">:</span>
+  <span class="n">push</span><span class="o">:</span>
+    <span class="n">branches</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">master</span>
+    <span class="n">paths</span><span class="o">-</span><span class="n">ignore</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">README</span><span class="o">.</span><span class="na">md</span>
+      <span class="o">-</span> <span class="n">LICENSE</span>
+      <span class="o">-</span> <span class="o">.</span><span class="na">gitignore</span>
+
+<span class="n">jobs</span><span class="o">:</span>
+  <span class="n">deploy</span><span class="o">:</span>
+    <span class="n">runs</span><span class="o">-</span><span class="n">on</span><span class="o">:</span> <span class="n">ubuntu</span><span class="o">-</span><span class="n">latest</span>
+
+    <span class="n">steps</span><span class="o">:</span>
+      <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">Checkout</span>
+        <span class="n">uses</span><span class="o">:</span> <span class="n">actions</span><span class="sr">/checkout@v2 # https://github.com/actions/</span><span class="n">checkout</span>
+      <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">Build</span> <span class="n">deploy</span> <span class="n">docker</span> <span class="n">image</span>
+        <span class="n">run</span><span class="o">:</span> <span class="o">|</span>
+          <span class="n">docker</span> <span class="n">build</span> <span class="o">-</span><span class="n">t</span> <span class="n">pelican</span> <span class="o">.</span>
+      <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">Setup</span> <span class="n">deploy</span> <span class="n">env</span>
+        <span class="n">env</span><span class="o">:</span>
+          <span class="n">GITHUB_DEPLOY_KEY</span><span class="o">:</span> <span class="n">$</span><span class="o">{{</span> <span class="n">secrets</span><span class="o">.</span><span class="na">BLOG_SSH_PRIVATE</span> <span class="o">}}</span>
+        <span class="n">run</span><span class="o">:</span> <span class="o">|</span>
+          <span class="err">#</span> <span class="kd">set</span> <span class="n">up</span> <span class="kd">private</span> <span class="n">key</span> <span class="k">for</span> <span class="n">deploy</span>
+          <span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">~/.</span><span class="n">ssh</span><span class="o">/</span>
+          <span class="n">echo</span> <span class="s2">&quot;$GITHUB_DEPLOY_KEY&quot;</span> <span class="o">|</span> <span class="n">tr</span> <span class="o">-</span><span class="n">d</span> <span class="s1">&#39;\r&#39;</span> <span class="o">&gt;</span> <span class="o">~/.</span><span class="n">ssh</span><span class="o">/</span><span class="n">blog</span><span class="o">-</span><span class="n">ssh</span><span class="o">-</span><span class="n">key</span>
+      <span class="o">-</span> <span class="n">name</span><span class="o">:</span> <span class="n">Build</span> <span class="n">and</span> <span class="n">deploy</span> <span class="n">Github</span> <span class="n">Page</span> <span class="k">with</span> <span class="n">docker</span>
+        <span class="n">env</span><span class="o">:</span>
+          <span class="n">DEPLOY_USER</span><span class="o">:</span> <span class="s1">&#39;Bill Yang&#39;</span> <span class="err">#</span> <span class="n">export</span> <span class="n">DEPLOY_USER</span><span class="o">=</span><span class="s1">&#39;Bill Yang&#39;</span>
+          <span class="n">DEPLOY_EMAIL</span><span class="o">:</span> <span class="s1">&#39;bill.yang@live.ca&#39;</span>
+          <span class="n">DEPLOY_REPO</span><span class="o">:</span> <span class="s1">&#39;git@github.com:bill-yang/bill-yang.github.io.git&#39;</span>
+        <span class="n">run</span><span class="o">:</span> <span class="o">|</span>
+          <span class="n">docker</span> <span class="n">build</span> <span class="o">-</span><span class="n">t</span> <span class="n">pelican</span> <span class="o">.</span>
+          <span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">rm</span> <span class="o">-</span><span class="n">v</span> <span class="n">$</span><span class="o">(</span><span class="n">pwd</span><span class="o">)/</span><span class="n">content</span><span class="o">:/</span><span class="n">website</span><span class="sr">/content:ro -v ~/.ssh/blog-ssh-key:/tmp/i</span><span class="n">d_rsa</span> <span class="o">-</span><span class="n">e</span> <span class="n">DEPLOY_USER</span> <span class="o">-</span><span class="n">e</span> <span class="n">DEPLOY_EMAIL</span> <span class="o">-</span><span class="n">e</span> <span class="n">DEPLOY_REPO</span> <span class="n">pelican</span> <span class="n">make</span> <span class="n">deploy</span>
+</code></pre></div>
+            </div>
+            <!-- /.entry-content -->
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+<!-- Sidebar -->
+<section class="well well-sm">
+  <ul class="list-group list-group-flush">
+
+<!-- Sidebar/Social -->
+<li class="list-group-item">
+  <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+  <ul class="list-group" id="social">
+    <li class="list-group-item"><a href="#"><i class="fa fa-you-can-add-links-in-your-config-file-square fa-lg"></i> You can add links in your config file</a></li>
+    <li class="list-group-item"><a href="#"><i class="fa fa-another-social-link-square fa-lg"></i> Another social link</a></li>
+  </ul>
+</li>
+<!-- End Sidebar/Social -->
+
+<!-- Sidebar/Links -->
+<li class="list-group-item">
+  <h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
+  <ul class="list-group" id="links">
+    <li class="list-group-item">
+      <a href="https://getpelican.com/" target="_blank">Pelican</a>
+    </li>
+    <li class="list-group-item">
+      <a href="https://www.python.org/" target="_blank">Python.org</a>
+    </li>
+    <li class="list-group-item">
+      <a href="https://palletsprojects.com/p/jinja/" target="_blank">Jinja2</a>
+    </li>
+    <li class="list-group-item">
+      <a href="#" target="_blank">You can modify those links in your config file</a>
+    </li>
+  </ul>
+</li>
+<!-- End Sidebar/Links -->
+  </ul>
+</section>
+<!-- End Sidebar -->            </aside>
+        </div>
+    </div>
+</div>
+<!-- End Content Container -->
+
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2021 Bill Yang
+            &middot; Powered by <a href="https://github.com/getpelican/pelican-themes/tree/master/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="/theme/js/respond.min.js"></script>
+
+
+
+
+</body>
+</html>

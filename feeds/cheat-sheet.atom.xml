@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>My Website - Cheat Sheet</title><link href="/" rel="alternate"></link><link href="/feeds/cheat-sheet.atom.xml" rel="self"></link><id>/</id><updated>2021-09-15T00:00:00-07:00</updated><entry><title>Markdown Cheat Sheet</title><link href="/markdown-cheat-sheet.html" rel="alternate"></link><published>2021-09-15T00:00:00-07:00</published><updated>2021-09-15T00:00:00-07:00</updated><author><name>Bill Yang</name></author><id>tag:None,2021-09-15:/markdown-cheat-sheet.html</id><summary type="html">&lt;p&gt;Markdown Cheat Sheet&lt;/p&gt;</summary><content type="html">&lt;h1&gt;Markdown Cheat Sheet&lt;/h1&gt;
+&lt;p&gt;Thanks for visiting &lt;a href="https://www.markdownguide.org"&gt;The Markdown Guide&lt;/a&gt;!&lt;/p&gt;
+&lt;p&gt;This Markdown cheat sheet provides a quick overview of all the Markdown syntax elements. It can’t cover every edge case, so if you need more information about any of these elements, refer to the reference guides for &lt;a href="https://www.markdownguide.org/basic-syntax"&gt;basic syntax&lt;/a&gt; and &lt;a href="https://www.markdownguide.org/extended-syntax"&gt;extended syntax&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Basic Syntax&lt;/h2&gt;
+&lt;p&gt;These are the elements outlined in John Gruber’s original design document. All Markdown applications support these elements.&lt;/p&gt;
+&lt;h3&gt;Heading&lt;/h3&gt;
+&lt;h1&gt;H1&lt;/h1&gt;
+&lt;h2&gt;H2&lt;/h2&gt;
+&lt;h3&gt;H3&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;# H1
+## H2
+### H3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Bold&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;bold text&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;**bold text**
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Italic&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;italicized text&lt;/em&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;*italicized text*
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Blockquote&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;blockquote&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&amp;gt; blockquote
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Ordered List&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;First item&lt;/li&gt;
+&lt;li&gt;Second item&lt;/li&gt;
+&lt;li&gt;Third item&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="mf"&gt;1.&lt;/span&gt; &lt;span class="n"&gt;First&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt;
+&lt;span class="mf"&gt;2.&lt;/span&gt; &lt;span class="n"&gt;Second&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt;
+&lt;span class="mf"&gt;3.&lt;/span&gt; &lt;span class="n"&gt;Third&lt;/span&gt; &lt;span class="n"&gt;item&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Unordered List&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;First item&lt;/li&gt;
+&lt;li&gt;Second item&lt;/li&gt;
+&lt;li&gt;Third item&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;- First item
+- Second item
+- Third item
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Code&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;code&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n n-Quoted"&gt;`code`&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Horizontal Rule&lt;/h3&gt;
+&lt;hr&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;---
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Link&lt;/h3&gt;
+&lt;p&gt;&lt;a href="https://www.markdownguide.org"&gt;Markdown Guide&lt;/a&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Markdown&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Guide&lt;/span&gt;&lt;span class="p"&gt;](&lt;/span&gt;&lt;span class="nl"&gt;https&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="c1"&gt;//www.markdownguide.org)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Image&lt;/h3&gt;
+&lt;p&gt;&lt;img alt="alt text" src="https://www.markdownguide.org/assets/images/tux.png"&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;alt&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="p"&gt;](&lt;/span&gt;&lt;span class="nl"&gt;https&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="c1"&gt;//www.markdownguide.org/assets/images/tux.png)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Extended Syntax&lt;/h2&gt;
+&lt;p&gt;These elements extend the basic syntax by adding additional features. Not all Markdown applications support these elements.&lt;/p&gt;
+&lt;h3&gt;Table&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Syntax&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Header&lt;/td&gt;
+&lt;td&gt;Title&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Paragraph&lt;/td&gt;
+&lt;td&gt;Text&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;| Syntax | Description |
+| ----------- | ----------- |
+| Header | Title |
+| Paragraph | Text |
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Fenced Code Block&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;{
+  &amp;quot;firstName&amp;quot;: &amp;quot;John&amp;quot;,
+  &amp;quot;lastName&amp;quot;: &amp;quot;Smith&amp;quot;,
+  &amp;quot;age&amp;quot;: 25
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Footnote&lt;/h3&gt;
+&lt;p&gt;Here's a sentence with a footnote. &lt;sup id="fnref:1"&gt;&lt;a class="footnote-ref" href="#fn:1"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;Here&amp;#39;s a sentence with a footnote. [^1]
+
+[^1]: This is the footnote.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Heading ID&lt;/h3&gt;
+&lt;h3 id="custom-id"&gt;My Great Heading&lt;/h3&gt;
+&lt;h3&gt;Definition List&lt;/h3&gt;
+&lt;dl&gt;
+&lt;dt&gt;term&lt;/dt&gt;
+&lt;dd&gt;definition&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;term&lt;/span&gt;
+&lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;definition&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Strikethrough&lt;/h3&gt;
+&lt;p&gt;~~The world is flat.~~&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;~~The world is flat.~~
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h3&gt;Task List&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;[x] Write the press release&lt;/li&gt;
+&lt;li&gt;[ ] Update the website&lt;/li&gt;
+&lt;li&gt;[ ] Contact the media&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Write&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;press&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;release&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt; &lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;Update&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;website&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;[&lt;/span&gt;&lt;span class="n"&gt; &lt;/span&gt;&lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;Contact&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;the&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;media&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;div class="footnote"&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id="fn:1"&gt;
+&lt;p&gt;This is the footnote.&amp;#160;&lt;a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;</content><category term="Cheat Sheet"></category><category term="Cheat Sheet"></category><category term="Markdown"></category></entry></feed>
